@@ -1,0 +1,24 @@
+header{
+    text-decoration-color: hotpink;
+}
+
+
+#grid{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#grid TR TD{
+    border:1px solid black;
+    background: green;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+}
+
+
+
+.cols{
+    border-width: 1px ;
+
+}
