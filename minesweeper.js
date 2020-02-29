@@ -13,7 +13,7 @@ function doAjax() {
 
 
     //Perform an AJAX POST request to the url, and set the param 'myParam' in the request body to paramValue
-    axios.post(url, { rows:rows, cols:cols, mines:mines })
+    axios.post(url, { rows: rows, cols: cols, mines: mines })
         .then(function (response) {
             //When successful, print 'Success: ' and the received data
             console.log("Success: ", response.data);
