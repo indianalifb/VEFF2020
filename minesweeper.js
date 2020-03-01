@@ -182,24 +182,24 @@ function Click_on_Cells(cell){
 //         cell.setAttribute("mine","true")
 
     
-class Cell {
-    constructor({
-        value = ""
-      isMine = false,
-      isRevealed = false,
-      isFlagged = false
-    }) {
-      Object.assign(this, {
-         //value of a cell: number of adjacent mines, F for flagged, M for mine
-        isMine,
-        isRevealed,
-        isFlagged
-      });
-    }
+// class Cell {
+//     constructor({
+//         value = ""
+//       //isMine = false,
+//       isRevealed = false,
+//       isFlagged = false
+//     }) {
+//       Object.assign(this, {
+//          //value of a cell: number of adjacent mines, F for flagged, M for mine
+//         isMine,
+//         isRevealed,
+//         isFlagged
+//       });
+//     }
   
     // getElement() {
     //   return document.querySelector(
     //     `.cell[data-xpos="${this.xpos}"][data-ypos="${this.ypos}"]`
       
-    }
+    
   
