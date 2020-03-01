@@ -10,12 +10,17 @@ header{
 
 #grid TR TD{
     border:1px solid black;
-    background: green;
+    background:grey;
     width: 16px;
     height: 16px;
     text-align: center;
 }
-
+#grid TR TD.mine{
+    background: hotpink;
+}
+#grid TR TD.not_mine{
+    background: green;
+}
 
 
 .cols{
