@@ -8,7 +8,7 @@ header{
     margin-right: auto;
 }
 
-#grid TR TD{
+/* #grid TR TD{
     border:1px solid black;
     background: green;
     width: 16px;
@@ -20,9 +20,11 @@ header{
 }
 #grid TR TD.not_mine{
     background:blue;
+} */
+
+.clicked{
+    background: blue;
 }
-
-
 
 
 .cols{

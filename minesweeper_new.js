@@ -13,8 +13,9 @@ function doAjax() {
     axios.post(url, { rows:rows, cols:cols, mines:mines })
         .then(function (response) {
             responseBoard = response.data.board
+            var Arraymines = response.data.board.minePositions
             console.log("Success: ", response.data);
-            CreateGrid(rows,cols);
+            CreateGrid(rows,cols, Arraymines);
             //When successful, print 'Success: ' and the received data
             //var Rows = responseBoard.rows;
             // console.log("rows: ",Rows);
@@ -32,15 +33,18 @@ function doAjax() {
         });
 }
 
-function CreateGrid(rows,cols){
+function CreateGrid(rows,cols,Arraymines){
     var htmlBoard = document.getElementById("board");
-    // var Cols = responseBoard.cols;
-    // var Rows = responseBoard.rows;
+    //var Cols = responseBoard.cols;
+    //var Rows = responseBoard.rows;
     for (var i=0;i<rows;i++){
         var row = document.createElement("div")
         // row = grid.insertRow(i);
         for (var j=0;j<cols;j++){
             var button = document.createElement("button")
+            button.id = i+"-"+j
+            document.getElementById("button").addEventListener("click",check_button(Arraymines,button.id))
+                
             // cell = row.insertCell(j);
             // cell.onclick = function(){
             //     Click_on_Cells(this);
@@ -52,29 +56,36 @@ function CreateGrid(rows,cols){
             }
         htmlBoard.appendChild(row);
         }
+
     }
 
+// function check_button(Arraymines,buttonId){
+//     var currentArrey = new Array();
+//     if (currentArrey[] in Arraymines{
 
-function Click_on_Cells(cell){
-    //cell.className = "clicked"
-    if (cell.getAttribute("new_mine") == true){
-        revealMines(rows,cols)
-        cell.className = "mine"
-    }
-    else{
-        cell.className = "not_mine"
-    }
-}
+//     }
+// }
 
-function AddMines(mines,rows,cols){
-    for (var i=0; i< mines.value;i++){
-        console.log(mines.value)
-        var rowIndex = Math.floor(Math.random()*rows)
-         var colIndex = Math.floor(Math.random()*cols)
+// function AddMines(Arraymines){
 
-         let cell = this.grid[rowIndex][colIndex];
-         cell.setAttribute("new_mine","true")
-         console.log(grid[rowIndex][colIndex].getAttribute("new_mine"))
-         if (testMode) cell.innerHTML="X"
-    }
-}
+//     for (var i=0; i< mines.value;i++){
+//         console.log(mines.value)
+//         var rowIndex = Math.floor(Math.random()*rows)
+//          var colIndex = Math.floor(Math.random()*cols)
+
+//          let cell = this.grid[rowIndex][colIndex];
+//          cell.setAttribute("new_mine","true")
+//          console.log(grid[rowIndex][colIndex].getAttribute("new_mine"))
+//          if (testMode) cell.innerHTML="X"
+//     }
+// }
+
+// box.onmousedown = function() {
+//     if (event.which === 3){ //rightclick
+//         PlaceFlag(box, gameboardarray, minesArray, buttonarray)
+//     }
+//     else{ //leftclick
+//         OnLeftClick(box,gameboardarray, buttonarray, minesArray, rows, cols)
+//     }
+
+// };
