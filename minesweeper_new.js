@@ -1,4 +1,4 @@
-
+var responseBoard;
 function doAjax() {
     //Prepare the parameter value for 'myParam'
 
@@ -12,14 +12,16 @@ function doAjax() {
     //Perform an AJAX POST request to the url, and set the param 'myParam' in the request body to paramValue
     axios.post(url, { rows:rows, cols:cols, mines:mines })
         .then(function (response) {
-            //When successful, print 'Success: ' and the received data
+            responseBoard = response.data.board
             console.log("Success: ", response.data);
-            const Rows = response.data.rows;
-            console.log("rows: ",Rows);
-            const Cols = response.data.cols;
-            const Minescount = response.data.mines;
-            const Minesposition = response.data.minepositions;
-            CreateGrid(Rows,Cols,Minescount,Minesposition);
+            CreateGrid(rows,cols);
+            //When successful, print 'Success: ' and the received data
+            //var Rows = responseBoard.rows;
+            // console.log("rows: ",Rows);
+             //var Cols = responseBoard.cols;
+            // const Minescount = response.data.mines;
+            // const Minesposition = response.data.minepositions;
+            //CreateGrid(Rows,Cols);
         })
         .catch(function (error) {
             //When unsuccessful, print the error.
@@ -30,20 +32,49 @@ function doAjax() {
         });
 }
 
-function CreateGrid(Rows,Cols){
-    grid.innerHTML="";
-    for (var i=0;i<Rows;i++){
-        row = grid.insertRow(i);
-        for (var j=0;j<Cols;j++){
-            cell = row.insertCell(j);
-            cell.onclick = function(){
-                Click_on_Cells(this);
-                var mine = document.createAttribute("new_mine")
-                mine.value = "false";
-                cell.setAttributeNode(mine);
-                console.log(mine.value)
-
+function CreateGrid(rows,cols){
+    var htmlBoard = document.getElementById("board");
+    // var Cols = responseBoard.cols;
+    // var Rows = responseBoard.rows;
+    for (var i=0;i<rows;i++){
+        var row = document.createElement("div")
+        // row = grid.insertRow(i);
+        for (var j=0;j<cols;j++){
+            var button = document.createElement("button")
+            // cell = row.insertCell(j);
+            // cell.onclick = function(){
+            //     Click_on_Cells(this);
+            //     var mine = document.createAttribute("new_mine")
+            //     mine.value = "false";
+            //     cell.setAttributeNode(mine);
+            //     console.log(mine.value)
+            row.appendChild(button);
             }
+        htmlBoard.appendChild(row);
         }
+    }
+
+
+function Click_on_Cells(cell){
+    //cell.className = "clicked"
+    if (cell.getAttribute("new_mine") == true){
+        revealMines(rows,cols)
+        cell.className = "mine"
+    }
+    else{
+        cell.className = "not_mine"
+    }
+}
+
+function AddMines(mines,rows,cols){
+    for (var i=0; i< mines.value;i++){
+        console.log(mines.value)
+        var rowIndex = Math.floor(Math.random()*rows)
+         var colIndex = Math.floor(Math.random()*cols)
+
+         let cell = this.grid[rowIndex][colIndex];
+         cell.setAttribute("new_mine","true")
+         console.log(grid[rowIndex][colIndex].getAttribute("new_mine"))
+         if (testMode) cell.innerHTML="X"
     }
 }
