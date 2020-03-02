@@ -26,11 +26,31 @@ function doAjax() {
         })
         .catch(function (error) {
             //When unsuccessful, print the error.
+            var rows = 10
+            var cols = 10
+            arraymines = addmines();
+            CreateGrid(rows,cols,arraymines)
             console.log(error);
         })
         .then(function () {
             // This code is always executed, independent of whether the request succeeds or fails.
         });
+}
+function addmines(){
+    var arraymines = [
+        [1, 3],
+        [3, 0],
+        [4, 2],
+        [4, 5],
+        [4, 7],
+        [6, 9],
+        [7, 7],
+        [8, 9],
+        [9, 3],
+        [9, 9],
+    ];
+    return arraymines
+
 }
 
 function CreateGrid(rows,cols,Arraymines){
@@ -47,7 +67,7 @@ function CreateGrid(rows,cols,Arraymines){
             button.id =i.toString()+ "-" +j.toString();
             button.innerHTML = "<span></span>";
             button.onclick=() =>{
-                left_click(button);
+                left_click(board_arr,button);
             }
             button.oncontextmenu=() =>{
                 button = right_click(button)
@@ -80,22 +100,32 @@ function CreateGrid(rows,cols,Arraymines){
         htmlBoard.appendChild(row);
         
     }
+}
     
 
-function left_click(button){
+function left_click(board_arr,button){
     var box = document.getElementById(button.id)
     console.log(button.id)
     console.log(box)
+    button_id = button.id.split("-",)
+    button_id1_int = parseInt(button_id[0])
 
-    if (box.className = "M"){
-        var box_ = document.getElementById("img");
-        mineImg.src="bomb.png";
-        mineImg.className = "mine";
-        box_.appendChild(mineImg)
+    button_id2_int = parseInt(button_id[1])
+
+
+    if (board_arr[button_id1_int][button_id2_int] = "M"){
+        console.log("er M")
+        //var box_ = document.getElementById("img");
+        // mineImg.src="bomb.png";
+        // mineImg.className = "mine";
+        // box.appendChild(mineImg)
+        box.style.backgroundColor = " red"
+        button.className = "M"
     }
 
-    else{
-        
+    else {
+        box.style.backgroundColor = "darkgrey";
+        button.className = "N"
     }
     
     // var source = event.target;
@@ -111,7 +141,6 @@ function left_click(button){
     }
 
 function right_click(button){
-
 }
     // console.log(buttonId)
     // button_str1,button_str2 = buttonId.split("-")
@@ -148,89 +177,90 @@ function right_click(button){
     //     }
             
     // }
-
 function initializeArray(rows,cols,Arraymines){
     var dimension = rows*cols
+    board_arr = createEmptyArray(cols,rows)
     row = parseInt(rows)
     col = parseInt(cols)
-    board_arr = createEmptyArray(cols,rows)
+
 
     for (i=0;i<Arraymines.lenght;i++){
-        var row_m = Arraymines[0]
-        var col_m = Arraymines[1]
-        var top = board_arr[row_m-1][col_m]
-        var top_left = board_arr[row_m-1][col_m-1]
-        var top_right = board_arr[row_m-1][col_m+1]
-        var left = board_arr[row_m][col_m-1]
-        var right = board_arr[row_m][col_m+1]
-        var bottom= board_arr[row_m+1][col_m]
-        var bottom_right = board_arr[row_m+1][col_m+1]
-        var bottom_left = board_arr[row_m+1][col_m-1]
-        var box = board_arr[row_m][col_m] 
-        box.className = "M"
-        if (Arraymines[0] == 0){
-            if (Arraymines[1] == 0){
-                right++;
-                bottom_right++;
-                bottom++;
+        var new_arr = Arrraymines[i]
+        var row_m =new_arr[0]
+        var col_m = new_arr[1]
+        var top = [row_m-1][col_m]
+        var top_left = [row_m-1][col_m-1]
+        var top_right = [row_m-1][col_m+1]
+        var left = [row_m][col_m-1]
+        var right =[row_m][col_m+1]
+        var bottom= [row_m+1][col_m]
+        var bottom_right = [row_m+1][col_m+1]
+        var bottom_left = [row_m+1][col_m-1]
+        var box = [row_m][col_m] 
+        board_arr[row_m][col_m] = "M"
+        if (new_arr[0] == 0){
+            if (new_arr[1] == 0){
+                board_arr[right[0]][right[1]]+=1;
+                board_arr[bottom_right[0]][bottom_right[1]]+=1;
+                board_arr[bottom[0]][bottom[1]]+=1;
         }
-            else if(Arraymines[1] == col-1){
-            bottom ++;
-            bottom_left++;
-            left++;
+            else if(new_arr[1] == col-1){
+                board_arr[bottom[0]][bottom[1]]+=1;
+            board_arr[bottom_left[0]][bottom_left[1]]+=1;
+            board_arr[left[0]][left[1]]+=1;
         }
             else  {
-                bottom ++;
-                bottom_left++;
-                bottom_right++;
-                right++;
-                left++;
+                board_arr[bottom[0]][bottom[1]]+=1;
+                board_arr[bottom_left[0]][bottom_left[1]]+=1;
+                board_arr[bottom_right[0]][bottom_right[1]]+=1;
+                board_arr[right[0]][right[1]]+=1;
+                board_arr[left[0]][left[1]]+=1;
         }
         
     }
-        else if(Arraymines[0] == row-1){
+        else if(new_arr[0] == row-1){
             if (Arraymines[1] == 0){
-                right++;
-                top++;
-                top_right++;
+                board_arr[right[0]][right[1]]+=1;
+                board_arr[top[0]][top[1]]+=1;
+                board_arr[top_right[0]][top_right[1]]+=1;
         }
-            else if(Arraymines[1] == col-1 ){
-            top ++;
-            top_left++;
-            left++;
+            else if(new_arr[1] == col-1 ){
+                board_arr[top[0]][top[1]]+=1;
+            board_arr[top_left[0]][top_left[1]]+=1;
+            board_arr[left[0]][left[1]]+=1;
         }
             else  {
-                top ++;
-                top_left++;
-                top_right++;
-                right++;
-                left++;
+                board_arr[top[0]][top[1]]+=1;
+                board_arr[top_left[0]][top_left[1]]+=1;
+                board_arr[top_right[0]][top_right[1]]+=1;
+                board_arr[right[0]][right[1]]+=1;
+                board_arr[left[0]][left[1]]+=1;
         }
 
 }
-  else if (Arraymines[1] == 0){
-      top++;
-      top_right++;
-      right++;
-      bottom++;
-      bottom_right++;
+  else if (new_arr[1] == 0){
+    board_arr[top[0]][top[1]]+=1;
+    board_arr[top_right[0]][top_right[1]]+=1;
+    board_arr[right[0]][right[1]]+=1;
+      board_arr[bottom[0]][bottom[1]]+=1;
+      board_arr[bottom_right[0]][bottom_right[1]]+=1;
   }
-  else if (Arraymines[1] == col-1){
-    top++;
-    top_left++;
-    left++;
-    bottom++;
-    bottom_left++;
+  else if (new_arr[1] == col-1){
+    board_arr[top[0]][top[1]]+=1;
+    board_arr[left[0]][left[1]]+=1;
+    board_arr[left[0]][left[1]]+=1;
+    board_arr[bottom[0]][bottom[1]]+=1;
+    board_arr[bottom_left[0]][bottom_left[1]]+=1;
 }
 else{
-    top++;
-    bottom++;
-    top_left++;
-    top_right++;
-    left++;
-    right++;
-    bottom_left++;
-    bottom_right++;
+    board_arr[top[0]][top[1]]+=1;
+    board_arr[bottom[0]][bottom[1]]+=1;
+    board_arr[left[0]][left[1]]+=1;
+    board_arr[top_right[0]][top_right[1]]+=1;
+    board_arr[left[0]][left[1]]+=1;
+    board_arr[right[0]][right[1]]+=1;
+    board_arr[bottom_left[0]][bottom_left[1]]+=1;
+    board_arr[bottom_right[0]][bottom_right[1]]+=1;
 }
     }
     // for (i=0;i<Arraymines.lenght;i++){
@@ -241,20 +271,52 @@ else{
         for (var col=0;col<col_m;col++){
             if(JSON.stringify(board_arr[row][col]).includes("M")){
                 board_arr[row][col] = "M"
+            
+        }
+        else{
+            board_arr[row][col] = "N"
+            var box = board_arr[row][col] 
+            if (board_arr[row][col] == 1){
+                box.className = "1"
+            }
+            if (board_arr[row][col] == 2){
+                box.className = "2"
+            }
+            if (board_arr[row][col] == 3){
+                box.className = "3"
+            }
+            if (board_arr[row][col] == 4){
+                box.className = "4"
+            }
+            if (board_arr[row][col] == 5){
+                box.className = "5"
+            }
+            if (board_arr[row][col] == 6){
+                box.className = "6"
+            }
+            if (board_arr[row][col] == 7){
+                box.className = "7"
+            }
         }
     }
     }
+    
     return board_arr
 }
 
-function createEmptyArray(rows,cols,dimension){
+function createEmptyArray(rows,cols){
     //let my_array = Array(rows).fill().map(() => Array(columns).fill(0));
-    my_array = []
-    len_cols = parseInt(cols)
-    for(var col = 0;col<rows;col++){
-        my_array[col] = Array.from(Array(len_cols),()=> 0)
-    }
+    dimension = rows*cols
+    my_array = Array.from(Array(dimension), () => 0)
+    //my_array = new Array(dimension+1).join('0').split(" ").map(parseInt)
+    //my_array = new Array(dimension).fill(0)
+    // my_array = []
+    // len_cols = parseInt(cols)
+    // for(var col = 0;col<rows;col++){
+    //     my_array[col] = Array.from(Array(len_cols),()=> 0)
+    
     return my_array;
+}
     //var my_array = new Array(dimension).fill(0)
     // var arr = [0]
     // var arr2 = []
@@ -265,7 +327,7 @@ function createEmptyArray(rows,cols,dimension){
     //     } 
     // return arr2 
     //return my_array
- }
+ 
 
 
 
@@ -292,4 +354,3 @@ function createEmptyArray(rows,cols,dimension){
 //         OnLeftClick(box,gameboardarray, buttonarray, minesArray, rows, cols)
 //     }
 
-}

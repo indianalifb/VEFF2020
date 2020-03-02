@@ -31,12 +31,19 @@ header{
     border-width: 1px ;
 
 }
-.mine{
+/* .mine{
     background: blueviolet;
-}
+} */
 .number{
     background:grey;
 }
 .M{
-    background: chartreuse;
+    
+    background-color: red;
+}
+/* .mine{
+    background: red;
+} */
+.N{
+    border-color: hotpink;
 }
