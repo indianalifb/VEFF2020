@@ -31,3 +31,12 @@ header{
     border-width: 1px ;
 
 }
+.mine{
+    background: blueviolet;
+}
+.number{
+    background:grey;
+}
+.M{
+    background: chartreuse;
+}
