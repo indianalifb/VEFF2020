@@ -1,4 +1,24 @@
 //Sample data for Assignment 3
+const express = require('express');
+var bodyParser = require('body-parser')
+const app = express();
+const port = 3000;
+
+app.get('/',(req,res)=> {
+    res.status(200).send("Hello world")
+});
+
+app.use('*',(req,res)=> {
+    res.status(405).send('Operation not supported')
+});
+
+app.listen(port, () =>{
+    console.log('Express app listening on port ' + port)
+});
+
+
+app.use(bodyParser.json())
+
 
 //The following is an example of an array of two events. 
 var events = [

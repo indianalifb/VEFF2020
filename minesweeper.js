@@ -120,6 +120,16 @@ function revealMines(rows,cols){
         }
     }
 }
+
+// box.onmousedown = function() {
+//     if (event.which === 3){ //rightclick
+//         PlaceFlag(box, gameboardarray, minesArray, buttonarray)
+//     }
+//     else{ //leftclick
+//         OnLeftClick(box,gameboardarray, buttonarray, minesArray, rows, cols)
+//     }
+
+// };
     //  for (var i= 0;i<mines;i++){
     //      var rowIndex = Math.floor(Math.random()*rows)
     //      var colIndex = Math.floor(Math.random()*cols)
