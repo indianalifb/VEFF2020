@@ -71,16 +71,6 @@ app.get('/', (req, res) => {
 // });
 
 
-
-/* UPDATE AN EVENT*/
-
-
-/*DELET AN EVENT */
-
-
-/*DELET ALL EVENTS */
-
-
 /*READ AN INDIVIDUAL BOOKING */
 
 
@@ -277,8 +267,42 @@ app.get('/api/v1/events/:id/bookings', (req, res) => {
             return;
         }
     }
-    res.status(404).json({ message: 'no bookings found' })
+    res.status(404).send({ "message": 'id that was requested does not exist' });
 });
+
+// 2. Read an individual booking
+// Returns all attributes of a specified booking (for an event).
+app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
+    for (let x = 0; x < events.length; x++) {
+        if (Number(events[x].id) === Number(req.params.eventId)) {
+            events.forEach(event => {
+                if (event.bookings.includes(Number(req.params.bookingId))) {
+                    for (let j = 0; j < bookings.length; j++) {
+                        if (bookings[j].id == req.params.bookingId) {
+                            res.status(200).send(bookings[j]);
+                            return;
+                        }
+                    }
+                }
+                else {
+                    res.status(404).send({ "message": 'booking id that was requested does not exist' });
+                    return;
+                }
+            });
+
+        }
+    }
+    res.status(404).send({ "message": 'id that was requested does not exist' });
+});
+
+// 3. Create a new booking
+// Creates a new booking for a specified event. The endpoint expects firstName, lastName, spots and
+// tel and/or email (meaning that you can provide tel and email, only tel, or only email) attributes
+// in the request body. The id (unique, non-negative number) shall be auto-generated. The request
+// is only successful if there are still enough spots left in the corresponding event. The request, if
+// successful, shall return the new booking (all attributes, including id). Furthermore, the id of the
+// new booking shall be added to the bookings array in the corresponding event.
+
 
 
 // app.use('*', (req, res) => {
