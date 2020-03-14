@@ -1,36 +1,26 @@
-//Sample data for Assignment 3
-const express = require('express');
-//var bodyParser = require('body-parser')
+var express = require('express');
+var bodyParser = require('body-parser');
 const app = express();
-const port = 3000;
-//var prefix = "/api/v1";
+var port = 3000;
+app.use(bodyParser.json());
 
-// app.post(prefix + "/observations");
-// app.use(bodyParser.urlencoded({
-//     extended: false
-// }))
+app.listen(port, function () {
+    console.log('Express server listening on port ' + port);
+});
 
-//app.use(bodyParser.json())
-
-
-
-
-
-//The following is an example of an array of two events. 
-let events = [
-    { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0,1,2] },
+var events = [
+    { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0, 1, 2] },
     { id: 1, name: "HarpFusion: Bach to the Future", description: "Harp ensemble", location: "Harpa, Hörpuhorn", capacity: 100, startDate: new Date(Date.UTC(2020, 02, 12, 15, 0)), endDate: new Date(Date.UTC(2020, 02, 12, 16, 0)), bookings: [] }
 ];
 // let bookings = [
 //     {id: 0, firstName: "Bertha", lastName: "Óladóttir", spots}
 // ]
 
-//The following is an example of an array of three bookings.
-// var bookings = [
-//     { id: 0, firstName: "John", lastName: "Doe", tel: "+3541234567", email: "", spots: 3},
-//     { id: 1, firstName: "Jane", lastName: "Doe", tel: "", email: "jane@doe.doe", spots: 1},
-//     { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5}
-// ];
+var bookings = [
+    { id: 0, firstName: "John", lastName: "Doe", tel: "+3541234567", email: "", spots: 3 },
+    { id: 1, firstName: "Jane", lastName: "Doe", tel: "", email: "jane@doe.doe", spots: 1 },
+    { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5 }
+];
 
 let bookings = [
     {eventId: 1,bookingEv: [
@@ -52,13 +42,15 @@ app.get('/',(req,res) =>{
 /* READ ALL EVETNS. RETURNS AN ARRAY OF ALL EVENTS*/ 
 app.get('/api/v1/events',(req,res)=> {
     //res.status(200).json(events)
-
     let showEvents = [];
     events.forEach(event => {
-        showEvents.push({id:event.id,
-            capacity:event.capacity,
-            startDate:event.startDate
-            ,endDate:event.endDate})
+        showEvents.push({
+            id: event.id,
+            name: event.name,
+            capacity: event.capacity,
+            startDate: event.startDate
+            , endDate: event.endDate
+        })
     });
     res.send(showEvents)
     res.status(200).end()
@@ -135,10 +127,22 @@ app.get('/api/v1/events/:eventId/bookings', (req, res) =>{
 
 /*DELET ALL BOOKINGS FOR AN EVENT */
 
-app.use('*',(req,res)=> {
+// 1. Read all events
+//For each event, only the name, id, capacity, startDate and endDate
+// is included in the response.
+app.get('/api/v1/events', function (req, res) {
+    console.log("read all events", events);
+    let tempEvents = JSON.parse(JSON.stringify(events));
+    for (i = 0; i < tempEvents.length; i++) {
+        delete tempEvents[i].bookings;
+        delete tempEvents[i].location;
+        delete tempEvents[i].description;
+    }
+    res.status(200).json(tempEvents);
+});
+
+
+app.use('*', (req, res) => {
     res.status(405).send('Operation not supported')
 });
-   
-app.listen(port, () =>{
-    console.log('Express app listening on port ' + port)
-});
+
