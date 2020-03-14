@@ -8,13 +8,12 @@ app.listen(port, function () {
     console.log('Express server listening on port ' + port);
 });
 
+let nextEventId = 2;
+
 var events = [
     { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0, 1, 2] },
     { id: 1, name: "HarpFusion: Bach to the Future", description: "Harp ensemble", location: "Harpa, Hörpuhorn", capacity: 100, startDate: new Date(Date.UTC(2020, 02, 12, 15, 0)), endDate: new Date(Date.UTC(2020, 02, 12, 16, 0)), bookings: [] }
 ];
-// let bookings = [
-//     {id: 0, firstName: "Bertha", lastName: "Óladóttir", spots}
-// ]
 
 var bookings = [
     { id: 0, firstName: "John", lastName: "Doe", tel: "+3541234567", email: "", spots: 3 },
@@ -22,25 +21,13 @@ var bookings = [
     { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5 }
 ];
 
-let bookings = [
-    {eventId: 1,bookingEv: [
-        { id: 0, firstName: "John", lastName: "Doe", tel: "+3541234567", email: "", spots: 3}
-    ]},
-    {eventId: 0,bookingEv: [
-        { id: 1, firstName: "Jane", lastName: "Doe", tel: "", email: "jane@doe.doe", spots: 1},
-        { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5}
-    ]}
-    // { id: 0, firstName: "John", lastName: "Doe", tel: "+3541234567", email: "", spots: 3},
-    // { id: 1, firstName: "Jane", lastName: "Doe", tel: "", email: "jane@doe.doe", spots: 1},
-    // { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5}
- ];
 
-app.get('/',(req,res) =>{
+app.get('/', (req, res) => {
     res.status(200).send("Hello world")
 });
 
-/* READ ALL EVETNS. RETURNS AN ARRAY OF ALL EVENTS*/ 
-app.get('/api/v1/events',(req,res)=> {
+/* READ ALL EVETNS. RETURNS AN ARRAY OF ALL EVENTS*/
+app.get('/api/v1/events', (req, res) => {
     //res.status(200).json(events)
     let showEvents = [];
     events.forEach(event => {
@@ -58,9 +45,9 @@ app.get('/api/v1/events',(req,res)=> {
 
 
 /* READ AN INDIVIDUAL EVENT*/
-app.get('/api/v1/events/:eventId',(req,res)=> {
-    for (let i =0;i<events.length;i++){
-        if (events[i].id == req.params.eventId){
+app.get('/api/v1/events/:eventId', (req, res) => {
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.eventId) {
             res.status(200).json(events[i])
             return;
         }
@@ -69,21 +56,19 @@ app.get('/api/v1/events/:eventId',(req,res)=> {
 });
 
 /*CREATE A NEW EVENT*/
-// app.post('api/v1/events',(req,res)=> {
-//     let checking = logic.eventChecking(req.body);
-//     if (checking) {
-//         res.status(400).json({message: errorMess[checking]});
-//     } else{
-//         let newEvent = Object(
-//             {
-//                 id: logic
-//             }
+app.post('api/v1/events', (req, res) => {
+    let checking = logic.eventChecking(req.body);
+    if (checking) {
+        res.status(400).json({ message: errorMess[checking] });
+    } else {
+        let newEvent = Object(
+            {
+                id: logic
+            }
 
-//         );
-//     }
-
-// });
-
+        );
+    }
+});
 
 
 
@@ -97,13 +82,13 @@ app.get('/api/v1/events/:eventId',(req,res)=> {
 
 
 /*READ ALL BOOKINGS FOR AN EVENT */
-app.get('/api/v1/events/:eventId/bookings', (req, res) =>{
-    for (let x = 0; x < events.length; x++){
-        if (Number(events[x].id) === Number(req.params.eventId)){
+app.get('/api/v1/events/:eventId/bookings', (req, res) => {
+    for (let x = 0; x < events.length; x++) {
+        if (Number(events[x].id) === Number(req.params.eventId)) {
             let all_bookings = [];
-            for (let y = 0; i < bookings.length; y++){
-                events[x].bookings.forEach(booking_ID =>{
-                    if (Number(bookings[y].id) === Number(booking_ID)){
+            for (let y = 0; i < bookings.length; y++) {
+                events[x].bookings.forEach(booking_ID => {
+                    if (Number(bookings[y].id) === Number(booking_ID)) {
                         all_bookings.push(bookings[y]);
                     }
                 });
@@ -112,7 +97,7 @@ app.get('/api/v1/events/:eventId/bookings', (req, res) =>{
             return;
         }
     }
-    res.status(404).json({message: 'no bookings found'})
+    res.status(404).json({ message: 'no bookings found' })
 });
 
 
@@ -131,18 +116,74 @@ app.get('/api/v1/events/:eventId/bookings', (req, res) =>{
 //For each event, only the name, id, capacity, startDate and endDate
 // is included in the response.
 app.get('/api/v1/events', function (req, res) {
-    console.log("read all events", events);
-    let tempEvents = JSON.parse(JSON.stringify(events));
-    for (i = 0; i < tempEvents.length; i++) {
-        delete tempEvents[i].bookings;
-        delete tempEvents[i].location;
-        delete tempEvents[i].description;
+    let resultEvents = [];
+    events.forEach(event => {
+        resultEvents.push({
+            id: event.id,
+            name: event.name,
+            capacity: event.capacity,
+            startDate: event.startDate,
+            endDate: event.endDate
+        })
+    });
+    res.status(200).json(resultEvents);
+});
+
+// 2. Read an individual event
+// Returns all attributes of a specified event
+app.get('/api/v1/events/:id', function (req, res) {
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.id) {
+            res.status(200).send(events[i]);
+            return;
+        }
     }
-    res.status(200).json(tempEvents);
+    res.status(404).send({ "message": 'id that was requested does not exist' });
+});
+
+// 3. Create a new event
+// Creates a new event. The endpoint expects at least the name, capacity, startDate and endDate
+// parameter. Description and location are optional. 
+// The id shall be auto-generated (i.e., not provided
+// in the request body). Similarly, the bookings array shall be initialised to an empty array. The
+// request, if successful, shall return the new event (all attributes, including id and bookings array).
+
+// To test this: in terminal
+//curl POST -H "Content-Type: application/json" -d '{"name":"indiana", "capacity":3,"startDate":"2020-04-03T22:00:00.000Z","endDate":"2020-05-03T22:00:00.000Z","description":"rokk"}' http://localhost:3000/api/v1/events
+app.post('/api/v1/events', function (req, res) {
+    //need this if we are modifying the response body
+    res.setHeader('Content-Type', 'text/html');
+    if (req.body === undefined ||
+        req.body.name === undefined ||
+        req.body.capacity === undefined || req.body.capacity < 0 ||
+        req.body.startDate === undefined ||
+        req.body.endDate === undefined) {
+        res.status(400).send({ message: 'invalid parameter for event' });
+        return;
+    }
+    if (req.body.description === undefined) {
+        req.body.description = '';
+    }
+    if (req.body.location === undefined) {
+        req.body.location = '';
+    }
+    let newEvent = {
+        id: nextEventId,
+        name: req.body.name,
+        capacity: req.body.capacity,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        description: req.body.description,
+        location: req.body.location,
+        bookings: [],
+    };
+    nextEventId++;
+    events.push(newEvent);
+    res.status(201).send(newEvent);
 });
 
 
-app.use('*', (req, res) => {
-    res.status(405).send('Operation not supported')
-});
+// app.use('*', (req, res) => {
+//     res.status(405).send('Operation not supported')
+// });
 
