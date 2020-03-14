@@ -81,26 +81,6 @@ app.get('/', (req, res) => {
 /*DELET ALL EVENTS */
 
 
-/*READ ALL BOOKINGS FOR AN EVENT */
-// app.get('/api/v1/events/:eventId/bookings', (req, res) => {
-//     for (let x = 0; x < events.length; x++) {
-//         if (Number(events[x].id) === Number(req.params.eventId)) {
-//             let all_bookings = [];
-//             for (let y = 0; i < bookings.length; y++) {
-//                 events[x].bookings.forEach(booking_ID => {
-//                     if (Number(bookings[y].id) === Number(booking_ID)) {
-//                         all_bookings.push(bookings[y]);
-//                     }
-//                 });
-//             }
-//             res.status(200).json(all_bookings);
-//             return;
-//         }
-//     }
-//     res.status(404).json({ message: 'no bookings found' })
-// });
-
-
 /*READ AN INDIVIDUAL BOOKING */
 
 
@@ -252,6 +232,54 @@ app.delete('/api/v1/events/:id', function (req, res) {
     }
     res.status(404).send({ "message": 'id that was requested does not exist' });
 });
+
+// 6. Delete all events
+// Deletes all existing events. The request also deletes all bookings for all existing events. The request,
+// if successful, returns all deleted events (all attributes), as well as their bookings (as a part of the
+// bookings attribute).
+
+//test in terminal:
+// curl -X DELETE localhost:3000/api/v1/events
+
+app.delete('/api/v1/events', function (req, res) {
+    for (let i = 0; i < events.length; i++) {
+        var bookingData = [];
+        if (events[i].bookings !== undefined) {
+            for (let j = 0; j < events[i].bookings.length; j++) {
+                if (events[i].bookings.includes(bookings[j].id)) {
+                    bookingData.push(bookings[j]);
+                }
+            }
+            events[i].bookings = bookingData;
+        }
+    }
+    var returnData = events.slice();
+    events = [];
+    bookings = [];
+    res.status(200).send(returnData);
+});
+
+
+// 1. Read all bookings for an event
+// Returns an array of all bookings (with all attributes) for a specified event.
+app.get('/api/v1/events/:id/bookings', (req, res) => {
+    let all_bookings = [];
+    for (let x = 0; x < events.length; x++) {
+        if (Number(events[x].id) === Number(req.params.id)) {
+            for (let y = 0; y < bookings.length; y++) {
+                bookings.forEach(booking => {
+                    if (Number(events[x].bookings[y]) === Number(booking.id)) {
+                        all_bookings.push(bookings[y]);
+                    }
+                });
+            }
+            res.status(200).send(all_bookings);
+            return;
+        }
+    }
+    res.status(404).json({ message: 'no bookings found' })
+});
+
 
 // app.use('*', (req, res) => {
 //     res.status(405).send('Operation not supported')
