@@ -16,13 +16,6 @@ function doAjax() {
             var Arraymines = response.data.board.minePositions
             console.log("Success: ", response.data);
             CreateGrid(rows,cols, Arraymines);
-            //When successful, print 'Success: ' and the received data
-            //var Rows = responseBoard.rows;
-            // console.log("rows: ",Rows);
-             //var Cols = responseBoard.cols;
-            // const Minescount = response.data.mines;
-            // const Minesposition = response.data.minepositions;
-            //CreateGrid(Rows,Cols);
         })
         .catch(function (error) {
             //When unsuccessful, print the error.
@@ -56,14 +49,10 @@ function addmines(){
 function CreateGrid(rows,cols,Arraymines){
     var htmlBoard = document.getElementById("board");
     board_arr = initializeArray(rows,cols,Arraymines)
-    //var Cols = responseBoard.cols;
-    //var Rows = responseBoard.rows;
     for (var i=0;i<rows;i++){
         var row = document.createElement("div")
-        // row = grid.insertRow(i);
         for (var j=0;j<cols;j++){
             let button = document.createElement("button")
-            //button.id = i+"-"+j
             button.id =i.toString()+ "-" +j.toString();
             button.innerHTML = "<span></span>";
             button.onclick=() =>{
@@ -72,30 +61,7 @@ function CreateGrid(rows,cols,Arraymines){
             button.oncontextmenu=() =>{
                 button = right_click(button)
             }
-
-            // console.log(button.id)
-            // console.log(Arraymines[0])
-            //var arr = new Array(button)
-            //button[i][j].addEventListener("click",check_button(board_arr));
-            //  button.onmousedown = function() {
-            //      if (event.which === 3){ //rightclick
-                     
-            // //         //PlaceFlag(box, gameboardarray, minesArray, buttonarray)
-            //      }
-            //      else{ //leftclick
-            //          check_button(board_arr,button.id)
-            //         //OnLeftClick(box,gameboardarray, buttonarray, minesArray, rows, cols)
-                //check_button(board_arr,button)
-            
-            // cell = row.insertCell(j);
-            // cell.onclick = function(){
-            //     Click_on_Cells(this);
-            //     var mine = document.createAttribute("new_mine")
-            //     mine.value = "false";
-            //     cell.setAttributeNode(mine);
-            //     console.log(mine.value)
             row.appendChild(button);
-            //document.body.appendChild(button)
             }
         htmlBoard.appendChild(row);
         
@@ -114,11 +80,6 @@ function left_click(board_arr,button){
 
 
     if (board_arr[button_id1_int][button_id2_int] = "M"){
-        console.log("er M")
-        //var box_ = document.getElementById("img");
-        // mineImg.src="bomb.png";
-        // mineImg.className = "mine";
-        // box.appendChild(mineImg)
         box.style.backgroundColor = " red"
         button.className = "M"
     }
@@ -127,56 +88,14 @@ function left_click(board_arr,button){
         box.style.backgroundColor = "darkgrey";
         button.className = "N"
     }
-    
-    // var source = event.target;
-    // id = source.id;
-    // if(event.which==3){
-    // }
-    // if (event.which==1){
-    //     console.log("hallo")
-    //     // if(board_arr[id]=="M"){
-    //     //     console.log("hallo")
-    //     // }
+
         
     }
 
 function right_click(button){
 }
-    // console.log(buttonId)
-    // button_str1,button_str2 = buttonId.split("-")
-    // button_int1 = parseInt(button_str1)
-    // button_int2 = parseInt(button_str2)
-    //button_int2 = parseInt(button_str2)
-    // if(board_arr[button_int1][button_int2] == "M"){
-    //     alert(gameover)
-    // }
-    // else{
-    //     button.className = "number"
-    // }
+  
 
-    //buttonId1,buttonId2 = buttonId.split(",")
-    // for (i = 0; i < Arraymines.length; i++){
-    //     var bomb = Arraymines[i]
-    //     var bombstring = bomb[0] + "-" + bomb[1]
-    //     if (buttonId == bombstring){
-    //         alert('gameover')
-        
-    
-    // if (button.id in Arraymines){
-    //     button.className = "mine"
-    // }
-
-    //for(i=0;i<Arraymines.lenght;i++){
-
-    //     if (buttonId1 == Arraymines[i]){
-    //         for(j=0;j<Arraymines.lenght;j++){
-    //             if(buttonId2 == Arraymines[j]){
-    //                 button.className = "mine"
-    //             }
-    //         }
-    //     }
-            
-    // }
 function initializeArray(rows,cols,Arraymines){
     var dimension = rows*cols
     board_arr = createEmptyArray(cols,rows)
@@ -263,10 +182,6 @@ else{
     board_arr[bottom_right[0]][bottom_right[1]]+=1;
 }
     }
-    // for (i=0;i<Arraymines.lenght;i++){
-    //     var row_m = Arraymines[0]
-    //     var col_m = Arraymines[1]
-    //     board_arr[0][1] = "M"
     for (var row=0;row<row_m;row++){
         for (var col=0;col<col_m;col++){
             if(JSON.stringify(board_arr[row][col]).includes("M")){
@@ -305,52 +220,15 @@ else{
 }
 
 function createEmptyArray(rows,cols){
-    //let my_array = Array(rows).fill().map(() => Array(columns).fill(0));
     dimension = rows*cols
     my_array = Array.from(Array(dimension), () => 0)
-    //my_array = new Array(dimension+1).join('0').split(" ").map(parseInt)
-    //my_array = new Array(dimension).fill(0)
-    // my_array = []
-    // len_cols = parseInt(cols)
-    // for(var col = 0;col<rows;col++){
-    //     my_array[col] = Array.from(Array(len_cols),()=> 0)
     
     return my_array;
 }
-    //var my_array = new Array(dimension).fill(0)
-    // var arr = [0]
-    // var arr2 = []
-    // while (dimension > 0){
-    //     if (len&1)arr2= arr2.concat(arr);
-    //         arr1 = arr1.concat(arr1)
-    //         len >>>= 1;
-    //     } 
-    // return arr2 
-    //return my_array
+   
  
 
 
 
 
-// function AddMines(Arraymines){
-
-//     for (var i=0; i< mines.value;i++){
-//         console.log(mines.value)
-//         var rowIndex = Math.floor(Math.random()*rows)
-//          var colIndex = Math.floor(Math.random()*cols)
-
-//          let cell = this.grid[rowIndex][colIndex];
-//          cell.setAttribute("new_mine","true")
-//          console.log(grid[rowIndex][colIndex].getAttribute("new_mine"))
-//          if (testMode) cell.innerHTML="X"
-//     }
-// }
-
-// box.onmousedown = function() {
-//     if (event.which === 3){ //rightclick
-//         PlaceFlag(box, gameboardarray, minesArray, buttonarray)
-//     }
-//     else{ //leftclick
-//         OnLeftClick(box,gameboardarray, buttonarray, minesArray, rows, cols)
-//     }
 
