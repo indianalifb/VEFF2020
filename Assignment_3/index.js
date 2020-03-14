@@ -27,48 +27,48 @@ app.get('/', (req, res) => {
 });
 
 /* READ ALL EVETNS. RETURNS AN ARRAY OF ALL EVENTS*/
-app.get('/api/v1/events', (req, res) => {
-    //res.status(200).json(events)
-    let showEvents = [];
-    events.forEach(event => {
-        showEvents.push({
-            id: event.id,
-            name: event.name,
-            capacity: event.capacity,
-            startDate: event.startDate
-            , endDate: event.endDate
-        })
-    });
-    res.send(showEvents)
-    res.status(200).end()
-});
+// app.get('/api/v1/events', (req, res) => {
+//     //res.status(200).json(events)
+//     let showEvents = [];
+//     events.forEach(event => {
+//         showEvents.push({
+//             id: event.id,
+//             name: event.name,
+//             capacity: event.capacity,
+//             startDate: event.startDate
+//             , endDate: event.endDate
+//         })
+//     });
+//     res.send(showEvents)
+//     res.status(200).end()
+// });
 
 
 /* READ AN INDIVIDUAL EVENT*/
-app.get('/api/v1/events/:eventId', (req, res) => {
-    for (let i = 0; i < events.length; i++) {
-        if (events[i].id == req.params.eventId) {
-            res.status(200).json(events[i])
-            return;
-        }
-    }
-    //res.status(200).send("Hello world")
-});
+// app.get('/api/v1/events/:eventId', (req, res) => {
+//     for (let i = 0; i < events.length; i++) {
+//         if (events[i].id == req.params.eventId) {
+//             res.status(200).json(events[i])
+//             return;
+//         }
+//     }
+//     //res.status(200).send("Hello world")
+// });
 
 /*CREATE A NEW EVENT*/
-app.post('api/v1/events', (req, res) => {
-    let checking = logic.eventChecking(req.body);
-    if (checking) {
-        res.status(400).json({ message: errorMess[checking] });
-    } else {
-        let newEvent = Object(
-            {
-                id: logic
-            }
+// app.post('api/v1/events', (req, res) => {
+//     let checking = logic.eventChecking(req.body);
+//     if (checking) {
+//         res.status(400).json({ message: errorMess[checking] });
+//     } else {
+//         let newEvent = Object(
+//             {
+//                 id: logic
+//             }
 
-        );
-    }
-});
+//         );
+//     }
+// });
 
 
 
@@ -82,23 +82,23 @@ app.post('api/v1/events', (req, res) => {
 
 
 /*READ ALL BOOKINGS FOR AN EVENT */
-app.get('/api/v1/events/:eventId/bookings', (req, res) => {
-    for (let x = 0; x < events.length; x++) {
-        if (Number(events[x].id) === Number(req.params.eventId)) {
-            let all_bookings = [];
-            for (let y = 0; i < bookings.length; y++) {
-                events[x].bookings.forEach(booking_ID => {
-                    if (Number(bookings[y].id) === Number(booking_ID)) {
-                        all_bookings.push(bookings[y]);
-                    }
-                });
-            }
-            res.status(200).json(all_bookings);
-            return;
-        }
-    }
-    res.status(404).json({ message: 'no bookings found' })
-});
+// app.get('/api/v1/events/:eventId/bookings', (req, res) => {
+//     for (let x = 0; x < events.length; x++) {
+//         if (Number(events[x].id) === Number(req.params.eventId)) {
+//             let all_bookings = [];
+//             for (let y = 0; i < bookings.length; y++) {
+//                 events[x].bookings.forEach(booking_ID => {
+//                     if (Number(bookings[y].id) === Number(booking_ID)) {
+//                         all_bookings.push(bookings[y]);
+//                     }
+//                 });
+//             }
+//             res.status(200).json(all_bookings);
+//             return;
+//         }
+//     }
+//     res.status(404).json({ message: 'no bookings found' })
+// });
 
 
 /*READ AN INDIVIDUAL BOOKING */
@@ -151,8 +151,6 @@ app.get('/api/v1/events/:id', function (req, res) {
 // To test this: in terminal
 //curl POST -H "Content-Type: application/json" -d '{"name":"indiana", "capacity":3,"startDate":"2020-04-03T22:00:00.000Z","endDate":"2020-05-03T22:00:00.000Z","description":"rokk"}' http://localhost:3000/api/v1/events
 app.post('/api/v1/events', function (req, res) {
-    //need this if we are modifying the response body
-    res.setHeader('Content-Type', 'text/html');
     if (req.body === undefined ||
         req.body.name === undefined ||
         req.body.capacity === undefined || req.body.capacity < 0 ||
@@ -182,6 +180,78 @@ app.post('/api/v1/events', function (req, res) {
     res.status(201).send(newEvent);
 });
 
+
+// 4. Update an event
+// (Completely) Updates an existing event. The updated data is expected in the request body (all
+// attributes, excluding the id and the bookings array). The request is only successful if there are no
+// existing bookings for the event. The request, if successful, returns all attributes of the event.
+
+// To test in terminal:
+//curl -H 'Content-Type: application/json' -X PUT -d '{"name":"indiana", "capacity": 200,"startDate":"2020-04-03T22:00:00.000Z","endDate":"2020-05-03T22:00:00.000Z","description":"rokk"}' localhost:3000/api/v1/events/1
+app.put('/api/v1/events/:id', function (req, res) {
+    console.log("update event");
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.id) {
+            if (events[i].bookings.length === 0) {
+                if (req.body === undefined ||
+                    req.body.name === undefined ||
+                    req.body.capacity === undefined || req.body.capacity < 0 ||
+                    req.body.startDate === undefined ||
+                    req.body.endDate === undefined) {
+                    res.status(400).send({ message: 'invalid parameter for event' });
+                    return;
+                }
+                if (req.body.description === undefined) {
+                    req.body.description = '';
+                }
+                if (req.body.location === undefined) {
+                    req.body.location = '';
+                }
+                let updatedEvent = {
+                    id: events[i].id,
+                    name: req.body.name,
+                    capacity: req.body.capacity,
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
+                    description: req.body.description,
+                    location: req.body.location,
+                    bookings: [],
+                };
+                events[i] = updatedEvent;
+                res.status(201).send(events[i]);
+                return;
+            }
+            else {
+                res.status(400).send({ "message": 'this event has a booking' });
+                return;
+            }
+        }
+    }
+    res.status(404).send({ "message": 'id that was requested does not exist' });
+});
+
+// 5. Delete an event
+// Deletes an existing event. The request is only successful if there are no existing bookings for the
+// event. The request, if successful, returns all attributes of the deleted event.
+
+//test in terminal:
+// curl -X DELETE localhost:3000/api/v1/events/0
+app.delete('/api/v1/events/:id', function (req, res) {
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.id) {
+            if (events[i].bookings.length === 0) {
+                let updatedEvent = events.splice(i, 1); //removes one element from position i
+                res.status(200).send(updatedEvent);
+                return;
+            }
+            else {
+                res.status(400).send({ "message": 'this event has a booking, cannot be deleted' });
+                return;
+            }
+        }
+    }
+    res.status(404).send({ "message": 'id that was requested does not exist' });
+});
 
 // app.use('*', (req, res) => {
 //     res.status(405).send('Operation not supported')
