@@ -9,6 +9,7 @@ app.listen(port, function () {
 });
 
 let nextEventId = 2;
+let nextBookingId = 3;
 
 var events = [
     { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0, 1, 2] },
@@ -159,7 +160,6 @@ app.post('/api/v1/events', function (req, res) {
 // To test in terminal:
 //curl -H 'Content-Type: application/json' -X PUT -d '{"name":"indiana", "capacity": 200,"startDate":"2020-04-03T22:00:00.000Z","endDate":"2020-05-03T22:00:00.000Z","description":"rokk"}' localhost:3000/api/v1/events/1
 app.put('/api/v1/events/:id', function (req, res) {
-    console.log("update event");
     for (let i = 0; i < events.length; i++) {
         if (events[i].id == req.params.id) {
             if (events[i].bookings.length === 0) {
@@ -254,14 +254,12 @@ app.delete('/api/v1/events', function (req, res) {
 // Returns an array of all bookings (with all attributes) for a specified event.
 app.get('/api/v1/events/:id/bookings', (req, res) => {
     let all_bookings = [];
-    for (let x = 0; x < events.length; x++) {
-        if (Number(events[x].id) === Number(req.params.id)) {
-            for (let y = 0; y < bookings.length; y++) {
-                bookings.forEach(booking => {
-                    if (Number(events[x].bookings[y]) === Number(booking.id)) {
-                        all_bookings.push(bookings[y]);
-                    }
-                });
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == Number(req.params.id)) {
+            for (let j = 0; j < bookings.length; j++) {
+                if (events[i].bookings.includes(Number(bookings[j].id))) {
+                    all_bookings.push(bookings[j]);
+                }
             }
             res.status(200).send(all_bookings);
             return;
@@ -273,24 +271,22 @@ app.get('/api/v1/events/:id/bookings', (req, res) => {
 // 2. Read an individual booking
 // Returns all attributes of a specified booking (for an event).
 app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
-    for (let x = 0; x < events.length; x++) {
-        if (Number(events[x].id) === Number(req.params.eventId)) {
-            events.forEach(event => {
-                if (event.bookings.includes(Number(req.params.bookingId))) {
-                    for (let j = 0; j < bookings.length; j++) {
-                        if (bookings[j].id == req.params.bookingId) {
-                            res.status(200).send(bookings[j]);
-                            return;
-                        }
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.eventId) {
+            if (events[i].bookings.includes(Number(req.params.bookingId))) {
+                for (let j = 0; j < bookings.length; j++) {
+                    if (bookings[j].id == req.params.bookingId) {
+                        res.status(200).send(bookings[j]);
+                        return;
                     }
                 }
-                else {
-                    res.status(404).send({ "message": 'booking id that was requested does not exist' });
-                    return;
-                }
-            });
-
+            }
+            else {
+                res.status(404).send({ "message": 'booking id that was requested does not exist' });
+                return;
+            }
         }
+
     }
     res.status(404).send({ "message": 'id that was requested does not exist' });
 });
@@ -302,7 +298,61 @@ app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
 // is only successful if there are still enough spots left in the corresponding event. The request, if
 // successful, shall return the new booking (all attributes, including id). Furthermore, the id of the
 // new booking shall be added to the bookings array in the corresponding event.
-//bara að prófa
+
+//To test in terminal:
+// curl POST -H "Content-Type: application/json" -d '{"firstName":"indiana","lastName":"bersteins","tel":"+3546944774","email":"blala","spots": 3}' localhost:3000/api/v1/events/0/bookings
+
+function checkForEmptySpots(eventCapacity, eventBookings) {
+    let spotsLeft = eventCapacity;
+    for (let i = 0; i < eventBookings.length; i++) {
+        spotsLeft = spotsLeft - bookings[eventBookings[i]].spots;
+    }
+    return spotsLeft;
+}
+
+app.post('/api/v1/events/:eventId/bookings', function (req, res) {
+    for (let i = 0; i < events.length; i++) {
+        if (Number(events[i].id) === Number(req.params.eventId)) {
+            let numberOfSpotsLeft = checkForEmptySpots(events[i].capacity, events[i].bookings);
+            if (numberOfSpotsLeft > 0 && numberOfSpotsLeft >= req.body.spots) {
+                if (req.body === undefined ||
+                    req.body.firstName === undefined ||
+                    req.body.lastName === undefined || req.body.capacity < 0 ||
+                    req.body.spots === undefined) {
+                    res.status(400).send({ message: 'invalid parameter for booking' });
+                    return;
+                }
+                else if (req.body.tel === undefined || req.body.email === undefined) {
+                    res.status(400).send({ message: 'tel or email is required' });
+                    return;
+                }
+                if (req.body.tel === undefined) {
+                    req.body.tel = '';
+                }
+                if (req.body.email === undefined) {
+                    req.body.email = '';
+                }
+                let newBooking = {
+                    id: nextBookingId,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    tel: req.body.tel,
+                    email: req.body.email,
+                    spots: req.body.spots,
+                };
+                bookings.push(newBooking);
+                events[i].bookings.push(newBooking.id);
+                nextBookingId++;
+                res.status(201).send(newBooking);
+                return;
+            }
+            else {
+                res.status(400).send({ "message": 'event with id: ' + req.params.eventId + 'is fully booked' });
+            }
+        }
+    }
+    res.status(404).send({ "message": 'id: ' + req.params.eventId + 'does not exist' });
+});
 
 
 
