@@ -26,9 +26,8 @@ app.get('/', (req, res) => {
     res.status(200).send("Hello world")
 });
 
-/* READ ALL EVETNS. RETURNS AN ARRAY OF ALL EVENTS*/
+/* READ ALL EVENTS RETURNS AN ARRAY OF ALL EVENTS*/
 // app.get('/api/v1/events', (req, res) => {
-//     //res.status(200).json(events)
 //     let showEvents = [];
 //     events.forEach(event => {
 //         showEvents.push({
@@ -310,3 +309,26 @@ app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
 //     res.status(405).send('Operation not supported')
 // });
 
+
+//4. Delete a booking
+app.delete('api/v1/events/:eventId/bookings/:bookingId',function(req,res){
+    for (let i = 0;i < events.length;i++){
+        if (events[i].id === req.param.eventId){
+            events.forEach(event =>{
+                if (event.bookings.includes(Number(req.params.bookingId))){
+                    for (let j = 0; j<bookings.length;j++){
+                        if (bookings[j].id == req.params.bookingId){
+                            let updatedbooking = events[i].bookings.splice(j,1);
+                            res.status(202).json({ updatedbooking})
+                            return;
+                        }
+                    }
+                }
+                res.status(404).json({message: 'Booking not found'})
+                return;
+            })
+        }
+        res.status(404).json({message: 'Event not found'})
+        
+    }
+})
