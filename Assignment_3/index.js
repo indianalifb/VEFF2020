@@ -302,6 +302,7 @@ app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
 // is only successful if there are still enough spots left in the corresponding event. The request, if
 // successful, shall return the new booking (all attributes, including id). Furthermore, the id of the
 // new booking shall be added to the bookings array in the corresponding event.
+//bara að prófa
 
 
 
