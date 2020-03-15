@@ -358,27 +358,31 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
 // Deletes an existing booking for a specified event. The request, if successful, returns all attributes
 // of the deleted booking. The booking id is removed from the corresponding event.
 
-app.delete('api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
+//test in terminal:
+// curl -X DELETE localhost:3000/api/v1/events/0/bookings/0
+app.delete('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
+    console.log("delete booking");
     for (let i = 0; i < events.length; i++) {
-        if (events[i].id === req.param.eventId) {
+        if (Number(events[i].id) === Number(req.params.eventId)) {
             events.forEach(event => {
                 if (event.bookings.includes(Number(req.params.bookingId))) {
                     for (let j = 0; j < bookings.length; j++) {
+                        events[i].bookings.splice(j, 1);
                         if (bookings[j].id == req.params.bookingId) {
-                            let updatedbooking = events[i].bookings.splice(j, 1);
-                            res.status(202).json({ updatedbooking })
+                            let updatedbooking = bookings.splice(j, 1);
+                            res.status(200).send(updatedbooking);
                             return;
                         }
                     }
+                } else {
+                    res.status(404).json({ message: 'Booking not found' });
+                    return;
                 }
-                res.status(404).json({ message: 'Booking not found' })
-                return;
             })
         }
-        res.status(404).json({ message: 'Event not found' })
-
+        res.status(404).json({ message: 'Event not found' });
     }
-})
+});
 
 
 
