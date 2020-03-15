@@ -354,31 +354,34 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
 });
 
 
-
-// app.use('*', (req, res) => {
-//     res.status(405).send('Operation not supported')
-// });
-
-
 //4. Delete a booking
-app.delete('api/v1/events/:eventId/bookings/:bookingId',function(req,res){
-    for (let i = 0;i < events.length;i++){
-        if (events[i].id === req.param.eventId){
-            events.forEach(event =>{
-                if (event.bookings.includes(Number(req.params.bookingId))){
-                    for (let j = 0; j<bookings.length;j++){
-                        if (bookings[j].id == req.params.bookingId){
-                            let updatedbooking = events[i].bookings.splice(j,1);
-                            res.status(202).json({ updatedbooking})
+// Deletes an existing booking for a specified event. The request, if successful, returns all attributes
+// of the deleted booking. The booking id is removed from the corresponding event.
+
+app.delete('api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id === req.param.eventId) {
+            events.forEach(event => {
+                if (event.bookings.includes(Number(req.params.bookingId))) {
+                    for (let j = 0; j < bookings.length; j++) {
+                        if (bookings[j].id == req.params.bookingId) {
+                            let updatedbooking = events[i].bookings.splice(j, 1);
+                            res.status(202).json({ updatedbooking })
                             return;
                         }
                     }
                 }
-                res.status(404).json({message: 'Booking not found'})
+                res.status(404).json({ message: 'Booking not found' })
                 return;
             })
         }
-        res.status(404).json({message: 'Event not found'})
-        
+        res.status(404).json({ message: 'Event not found' })
+
     }
 })
+
+
+
+// app.use('*', (req, res) => {
+//     res.status(405).send('Operation not supported')
+// });
