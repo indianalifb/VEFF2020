@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 const app = express();
-var port = 3000;
+var port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.listen(port, function () {
@@ -317,7 +317,7 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
                 if (req.body === undefined ||
                     req.body.firstName === undefined ||
                     req.body.lastName === undefined || req.body.capacity < 0 ||
-                    req.body.spots === undefined) {
+                    req.body.spots === undefined || req.body.spots > 0) {
                     res.status(400).send({ message: 'invalid parameter for booking' });
                     return;
                 }
