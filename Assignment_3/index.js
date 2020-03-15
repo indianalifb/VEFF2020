@@ -71,17 +71,6 @@ app.get('/', (req, res) => {
 // });
 
 
-/*READ AN INDIVIDUAL BOOKING */
-
-
-/*CREATE A NEW BOOKING */
-
-
-/*DELET A BOOKING */
-
-
-/*DELET ALL BOOKINGS FOR AN EVENT */
-
 // 1. Read all events
 //For each event, only the name, id, capacity, startDate and endDate
 // is included in the response.
@@ -385,23 +374,31 @@ app.delete('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
 });
 
 //5. delete all bookings for an event
-app.delete('api/v1/events/:eventId/bookings', function (req,res){
-    let empty_bookings_list = []
-    for (let x=0; x < events.length; x++){
-        if (events[x].id === req.param.eventId){
-            for (let y = 0 ; y < bookings.length; y++){
-                for (let z = 0; z < events[x].bookings.length; z ++){
-                    if (bookings[y].id === events[x].bookings[z]){
-                        empty_bookings_list.push(bookings.splice(y--,1));
-                    }
+// Deletes all existing bookings for a specified event. The request, if successful, returns all deleted
+// bookings (all attributes). The bookings array for the corresponding event is emptied.
+
+// test in terminal:
+// curl -X DELETE localhost:3000/api/v1/events/0/bookings
+
+app.delete('/api/v1/events/:eventId/bookings', function (req, res) {
+    console.log('DELETE ALL BOOKINGS');
+    var deletedBookings = []
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].id == req.params.eventId) {
+            var eventBookings = events[i].bookings.slice();
+            events[i].bookings = [];
+            for (let y = 0; y < bookings.length; y++) {
+                if (eventBookings.includes(bookings[y].id)) {
+                    deletedBookings.push(bookings[y]);
+                    bookings.splice(y, 1);
+                    y -= 1;
                 }
             }
-            events[i].bookings = []
-            res.status(200).json({bookings: empty_bookings_list})
+            res.status(200).send(deletedBookings);
             return;
         }
     }
-    res.status(404).json({message: 'Event not found'})
+    res.status(404).json({ message: 'Event with id does not exist' });
 });
 
 
