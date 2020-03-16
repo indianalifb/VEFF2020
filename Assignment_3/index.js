@@ -69,8 +69,8 @@ app.get('/api/v1/events/:id', function (req, res) {
 app.post('/api/v1/events', function (req, res) {
     if (req.body === undefined ||
         req.body.name === undefined ||
-        req.body.capacity === undefined || req.body.capacity < 0 ||
-        req.body.startDate === undefined ||
+        req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN || 
+        req.body.startDate === undefined || date_validation(req.body.startDate,req.body.endDate) ||
         req.body.endDate === undefined) {
         res.status(400).json({ message: 'Invalid parameter for event' });
         return;
@@ -110,7 +110,7 @@ app.put('/api/v1/events/:id', function (req, res) {
             if (events[i].bookings.length === 0) {
                 if (req.body === undefined ||
                     req.body.name === undefined ||
-                    req.body.capacity === undefined || req.body.capacity < 0 ||
+                    req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN || 
                     req.body.startDate === undefined ||
                     req.body.endDate === undefined) {
                     res.status(400).send({ message: 'Invalid parameter for event' });
@@ -262,8 +262,8 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
             if (numberOfSpotsLeft > 0 && numberOfSpotsLeft >= req.body.spots) {
                 if (req.body === undefined ||
                     req.body.firstName === undefined ||
-                    req.body.lastName === undefined || req.body.capacity < 0 ||
-                    req.body.spots === undefined || req.body.spots > 0) {
+                    req.body.lastName === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN ||
+                    req.body.spots === undefined || req.body.spots > 0 || Number.isNaN(Number(req.body.spots)) == NaN) {
                     res.status(400).json({ message: 'Invalid parameter for booking' });
                     return;
                 }
@@ -365,29 +365,16 @@ app.use('*', (req, res) => {
 });
 
 
-function eventValidation(event_obj){
-    if(event_obj === undefined){
+function date_validation(start_date,end_date){
+    var start_date_parsed = new Date(Date.parse(start_date));
+    var end_date_parsed = new Date(Date.parse(end_date));
+    if (start_date_parsed.toUTCString()!=start_date){
         return 1;
     }
-    if (event_obj.capacity < 0 || Number.isNaN(Number(event_obj.capacity))) {
+
+    if (end_date_parsed.toUTCString()!=end_date){
         return 2;
     }
-    
-    //if event_obj.
-
-
-}
-
-
-function bookingValidation(event_obj){
-    if(event_obj === undefined){
-        return 1;
-    }
-    if (event_obj.spots < 0 || Number.isNaN(Number(event_obj.capacity))){
-        return 2;
-    }
-    
-    //if event_obj.
-
-
+    //if ( )
+    return 0;
 }
