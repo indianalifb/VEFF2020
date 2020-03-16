@@ -24,10 +24,6 @@ var bookings = [
 ];
 
 
-app.get('/', (req, res) => {
-    res.status(200).send("Hello world")
-});
-
 
 // 1. Read all events
 //For each event, only the name, id, capacity, startDate and endDate
