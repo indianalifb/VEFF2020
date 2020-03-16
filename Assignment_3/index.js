@@ -8,8 +8,8 @@ app.listen(port, function () {
     console.log('Express server listening on port ' + port);
 });
 
-let nextEventId = 2;
-let nextBookingId = 3;
+let nextEventId = 1;
+let nextBookingId = 1;
 
 var events = [
     { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0, 1, 2] },
@@ -363,3 +363,31 @@ app.delete('/api/v1/events/:eventId/bookings', function (req, res) {
 app.use('*', (req, res) => {
     res.status(405).send('Operation not supported, unsupported HTTP verb or non-existing endpoint ')
 });
+
+
+function eventValidation(event_obj){
+    if(event_obj === undefined){
+        return 1;
+    }
+    if (event_obj.capacity < 0 || Number.isNaN(Number(event_obj.capacity))) {
+        return 2;
+    }
+    
+    //if event_obj.
+
+
+}
+
+
+function bookingValidation(event_obj){
+    if(event_obj === undefined){
+        return 1;
+    }
+    if (event_obj.spots < 0 || Number.isNaN(Number(event_obj.capacity))){
+        return 2;
+    }
+    
+    //if event_obj.
+
+
+}
