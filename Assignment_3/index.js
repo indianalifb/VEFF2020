@@ -111,7 +111,7 @@ app.put('/api/v1/events/:id', function (req, res) {
                 if (req.body === undefined ||
                     req.body.name === undefined ||
                     req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN || 
-                    req.body.startDate === undefined ||
+                    req.body.startDate === undefined || date_validation(req.body.startDate,req.body.endDate) ||
                     req.body.endDate === undefined) {
                     res.status(400).send({ message: 'Invalid parameter for event' });
                     return;
