@@ -27,49 +27,6 @@ app.get('/', (req, res) => {
     res.status(200).send("Hello world")
 });
 
-/* READ ALL EVENTS RETURNS AN ARRAY OF ALL EVENTS*/
-// app.get('/api/v1/events', (req, res) => {
-//     let showEvents = [];
-//     events.forEach(event => {
-//         showEvents.push({
-//             id: event.id,
-//             name: event.name,
-//             capacity: event.capacity,
-//             startDate: event.startDate
-//             , endDate: event.endDate
-//         })
-//     });
-//     res.send(showEvents)
-//     res.status(200).end()
-// });
-
-
-/* READ AN INDIVIDUAL EVENT*/
-// app.get('/api/v1/events/:eventId', (req, res) => {
-//     for (let i = 0; i < events.length; i++) {
-//         if (events[i].id == req.params.eventId) {
-//             res.status(200).json(events[i])
-//             return;
-//         }
-//     }
-//     //res.status(200).send("Hello world")
-// });
-
-/*CREATE A NEW EVENT*/
-// app.post('api/v1/events', (req, res) => {
-//     let checking = logic.eventChecking(req.body);
-//     if (checking) {
-//         res.status(400).json({ message: errorMess[checking] });
-//     } else {
-//         let newEvent = Object(
-//             {
-//                 id: logic
-//             }
-
-//         );
-//     }
-// });
-
 
 // 1. Read all events
 //For each event, only the name, id, capacity, startDate and endDate
@@ -93,11 +50,11 @@ app.get('/api/v1/events', function (req, res) {
 app.get('/api/v1/events/:id', function (req, res) {
     for (let i = 0; i < events.length; i++) {
         if (events[i].id == req.params.id) {
-            res.status(200).send(events[i]);
+            res.status(200).json(events[i]);
             return;
         }
     }
-    res.status(404).send({ "message": 'id that was requested does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.id + ' does not exist' });
 });
 
 // 3. Create a new event
@@ -115,7 +72,7 @@ app.post('/api/v1/events', function (req, res) {
         req.body.capacity === undefined || req.body.capacity < 0 ||
         req.body.startDate === undefined ||
         req.body.endDate === undefined) {
-        res.status(400).send({ message: 'invalid parameter for event' });
+        res.status(400).json({ message: 'Invalid parameter for event' });
         return;
     }
     if (req.body.description === undefined) {
@@ -136,7 +93,7 @@ app.post('/api/v1/events', function (req, res) {
     };
     nextEventId++;
     events.push(newEvent);
-    res.status(201).send(newEvent);
+    res.status(201).json(newEvent);
 });
 
 
@@ -156,7 +113,7 @@ app.put('/api/v1/events/:id', function (req, res) {
                     req.body.capacity === undefined || req.body.capacity < 0 ||
                     req.body.startDate === undefined ||
                     req.body.endDate === undefined) {
-                    res.status(400).send({ message: 'invalid parameter for event' });
+                    res.status(400).send({ message: 'Invalid parameter for event' });
                     return;
                 }
                 if (req.body.description === undefined) {
@@ -176,16 +133,16 @@ app.put('/api/v1/events/:id', function (req, res) {
                     bookings: [],
                 };
                 events[i] = updatedEvent;
-                res.status(201).send(events[i]);
+                res.status(200).json(events[i]);
                 return;
             }
             else {
-                res.status(400).send({ "message": 'this event has a booking' });
+                res.status(400).json({ "message": 'Cannot update event with id: ' + req.params.id + ', it has bookings.' });
                 return;
             }
         }
     }
-    res.status(404).send({ "message": 'id that was requested does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.id + ' does not exist.' });
 });
 
 // 5. Delete an event
@@ -199,16 +156,16 @@ app.delete('/api/v1/events/:id', function (req, res) {
         if (events[i].id == req.params.id) {
             if (events[i].bookings.length === 0) {
                 let updatedEvent = events.splice(i, 1); //removes one element from position i
-                res.status(200).send(updatedEvent);
+                res.status(200).json(updatedEvent);
                 return;
             }
             else {
-                res.status(400).send({ "message": 'this event has a booking, cannot be deleted' });
+                res.status(400).json({ "message": 'Cannot delete event with id: ' + req.params.id + ', it has bookings.' });
                 return;
             }
         }
     }
-    res.status(404).send({ "message": 'id that was requested does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.id + ' does not exist.' });
 });
 
 // 6. Delete all events
@@ -234,7 +191,7 @@ app.delete('/api/v1/events', function (req, res) {
     var returnData = events.slice();
     events = [];
     bookings = [];
-    res.status(200).send(returnData);
+    res.status(200).json(returnData);
 });
 
 
@@ -249,11 +206,11 @@ app.get('/api/v1/events/:id/bookings', (req, res) => {
                     all_bookings.push(bookings[j]);
                 }
             }
-            res.status(200).send(all_bookings);
+            res.status(200).json(all_bookings);
             return;
         }
     }
-    res.status(404).send({ "message": 'id that was requested does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.id + ' does not exist.' });
 });
 
 // 2. Read an individual booking
@@ -264,19 +221,19 @@ app.get('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
             if (events[i].bookings.includes(Number(req.params.bookingId))) {
                 for (let j = 0; j < bookings.length; j++) {
                     if (bookings[j].id == req.params.bookingId) {
-                        res.status(200).send(bookings[j]);
+                        res.status(200).json(bookings[j]);
                         return;
                     }
                 }
             }
             else {
-                res.status(404).send({ "message": 'booking id that was requested does not exist' });
+                res.status(404).json({ "message": 'Booking with id: ' + req.params.eventId + ' does not exist.' });
                 return;
             }
         }
 
     }
-    res.status(404).send({ "message": 'id that was requested does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.eventId + ' does not exist.' });
 });
 
 // 3. Create a new booking
@@ -307,11 +264,11 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
                     req.body.firstName === undefined ||
                     req.body.lastName === undefined || req.body.capacity < 0 ||
                     req.body.spots === undefined || req.body.spots > 0) {
-                    res.status(400).send({ message: 'invalid parameter for booking' });
+                    res.status(400).json({ message: 'Invalid parameter for booking' });
                     return;
                 }
                 else if (req.body.tel === undefined || req.body.email === undefined) {
-                    res.status(400).send({ message: 'tel or email is required' });
+                    res.status(400).json({ message: 'Tel or email is required' });
                     return;
                 }
                 if (req.body.tel === undefined) {
@@ -331,15 +288,15 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
                 bookings.push(newBooking);
                 events[i].bookings.push(newBooking.id);
                 nextBookingId++;
-                res.status(201).send(newBooking);
+                res.status(201).json(newBooking);
                 return;
             }
             else {
-                res.status(400).send({ "message": 'event with id: ' + req.params.eventId + 'is fully booked' });
+                res.status(400).json({ "message": 'Event with id: ' + req.params.eventId + ' is fully booked' });
             }
         }
     }
-    res.status(404).send({ "message": 'id: ' + req.params.eventId + 'does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.eventId + ' does not exist.' });
 });
 
 
@@ -359,17 +316,17 @@ app.delete('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
                         events[i].bookings.splice(j, 1);
                         if (bookings[j].id == req.params.bookingId) {
                             let updatedbooking = bookings.splice(j, 1);
-                            res.status(200).send(updatedbooking);
+                            res.status(200).json(updatedbooking);
                             return;
                         }
                     }
                 } else {
-                    res.status(404).json({ message: 'Booking not found' });
+                    res.status(404).json({ "message": 'Booking with id: ' + req.params.bookingId + ' does not exist.' });
                     return;
                 }
             })
         }
-        res.status(404).json({ message: 'Event not found' });
+        res.status(404).json({ "message": 'Event with id: ' + req.params.eventId + ' does not exist.' });
     }
 });
 
@@ -381,7 +338,6 @@ app.delete('/api/v1/events/:eventId/bookings/:bookingId', function (req, res) {
 // curl -X DELETE localhost:3000/api/v1/events/0/bookings
 
 app.delete('/api/v1/events/:eventId/bookings', function (req, res) {
-    console.log('DELETE ALL BOOKINGS');
     var deletedBookings = []
     for (let i = 0; i < events.length; i++) {
         if (events[i].id == req.params.eventId) {
@@ -393,16 +349,17 @@ app.delete('/api/v1/events/:eventId/bookings', function (req, res) {
                     bookings.splice(y, 1);
                     y -= 1;
                 }
+                res.status(400).json({ "message": 'Event with id: ' + req.params.eventId + ' has no bookings' });
             }
-            res.status(200).send(deletedBookings);
+            res.status(200).json(deletedBookings);
             return;
         }
     }
-    res.status(404).json({ message: 'Event with id does not exist' });
+    res.status(404).json({ "message": 'Event with id: ' + req.params.eventId + ' does not exist.' });
 });
 
 
 
-// app.use('*', (req, res) => {
-//     res.status(405).send('Operation not supported')
-// });
+app.use('*', (req, res) => {
+    res.status(405).send('Operation not supported, unsupported HTTP verb or non-existing endpoint ')
+});
