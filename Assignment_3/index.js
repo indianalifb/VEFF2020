@@ -8,8 +8,9 @@ app.listen(port, function () {
     console.log('Express server listening on port ' + port);
 });
 
-let nextEventId = 1;
-let nextBookingId = 1;
+let nextEventId = 2;
+let nextBookingId = 3;
+var x = (new Date()).getTime() / 1000;
 
 var events = [
     { id: 0, name: "The Whistlers", description: "Romania, 2019, 97 minutes", location: "Bio Paradís, Salur 1", capacity: 40, startDate: new Date(Date.UTC(2020, 02, 03, 22, 0)), endDate: new Date(Date.UTC(2020, 02, 03, 23, 45)), bookings: [0, 1, 2] },
@@ -22,10 +23,6 @@ var bookings = [
     { id: 2, firstName: "Meðaljón", lastName: "Jónsson", tel: "+3541111111", email: "mj@test.is", spots: 5 }
 ];
 
-
-app.get('/', (req, res) => {
-    res.status(200).send("Hello world")
-});
 
 
 // 1. Read all events
@@ -65,13 +62,14 @@ app.get('/api/v1/events/:id', function (req, res) {
 // request, if successful, shall return the new event (all attributes, including id and bookings array).
 
 // To test this: in terminal
-//curl POST -H "Content-Type: application/json" -d '{"name":"indiana", "capacity":3,"startDate":"2020-04-03T22:00:00.000Z","endDate":"2020-05-03T22:00:00.000Z","description":"rokk"}' http://localhost:3000/api/v1/events
+//curl POST -H "Content-Type:application/json" -d '{"name":"indiana", "capacity":3,"startDate":"2019-03-03T22:00:00.000Z","endDate":"2018-05-03T22:00:00.000Z","description":"rokk"}' http://localhost:3000/api/v1/events
 app.post('/api/v1/events', function (req, res) {
     if (req.body === undefined ||
         req.body.name === undefined ||
-        req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN || 
-        req.body.startDate === undefined || date_validation(req.body.startDate,req.body.endDate) ||
-        req.body.endDate === undefined) {
+        req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN ||
+        req.body.startDate === undefined || x >= Number(req.body.startDate) ||
+        req.body.endDate === undefined ||
+        Number(req.body.endDate) < Number(req.body.startDate)) {
         res.status(400).json({ message: 'Invalid parameter for event' });
         return;
     }
@@ -110,8 +108,8 @@ app.put('/api/v1/events/:id', function (req, res) {
             if (events[i].bookings.length === 0) {
                 if (req.body === undefined ||
                     req.body.name === undefined ||
-                    req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN || 
-                    req.body.startDate === undefined || date_validation(req.body.startDate,req.body.endDate) ||
+                    req.body.capacity === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN ||
+                    req.body.startDate === undefined ||
                     req.body.endDate === undefined) {
                     res.status(400).send({ message: 'Invalid parameter for event' });
                     return;
@@ -262,8 +260,9 @@ app.post('/api/v1/events/:eventId/bookings', function (req, res) {
             if (numberOfSpotsLeft > 0 && numberOfSpotsLeft >= req.body.spots) {
                 if (req.body === undefined ||
                     req.body.firstName === undefined ||
-                    req.body.lastName === undefined || req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN ||
-                    req.body.spots === undefined || req.body.spots > 0 || Number.isNaN(Number(req.body.spots)) == NaN) {
+                    req.body.lastName === undefined ||
+                    req.body.capacity < 0 || Number.isNaN(Number(req.body.capacity)) == NaN ||
+                    req.body.spots === undefined || req.body.spots < 0 || Number.isNaN(Number(req.body.spots)) == NaN) {
                     res.status(400).json({ message: 'Invalid parameter for booking' });
                     return;
                 }
@@ -364,17 +363,3 @@ app.use('*', (req, res) => {
     res.status(405).send('Operation not supported, unsupported HTTP verb or non-existing endpoint ')
 });
 
-
-function date_validation(start_date,end_date){
-    var start_date_parsed = new Date(Date.parse(start_date));
-    var end_date_parsed = new Date(Date.parse(end_date));
-    if (start_date_parsed.toUTCString()!=start_date){
-        return 1;
-    }
-
-    if (end_date_parsed.toUTCString()!=end_date){
-        return 2;
-    }
-    //if ( )
-    return 0;
-}
