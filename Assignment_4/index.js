@@ -36,7 +36,7 @@ app.use(cors());
 
 //Event endpoints
 app.get(apiPath + version + '/events', (req, res) => {
-    Event.find({ }, '-__v -description -location', function (err, events) {
+    Event.find({}, '-__v -description -location', function (err, events) {
         if (err) { return next(err); }
         res.status(200).json(events);
     });
@@ -104,10 +104,10 @@ app.delete(apiPath + version + '/events/:eventId', (req, res) => {
 //Bookings endpoints
 app.get(apiPath + version + '/events/:eventId/bookings', (req, res) => {
     if (!utility.isValidObjectID(req.params.eventId)) {
-        return res.status(404).json({"message": "Event not found!"});
+        return res.status(404).json({ "message": "Event not found!" });
     }
 
-    Booking.find({eventId: req.params.eventId}, '-__v -eventId', function(err, bookings) {
+    Booking.find({ eventId: req.params.eventId }, '-__v -eventId', function (err, bookings) {
         if (err) { return res.status(500).json({ "message": "Internal server error on getting all bookings." }); }
         res.status(200).json(bookings);
     });
@@ -115,18 +115,18 @@ app.get(apiPath + version + '/events/:eventId/bookings', (req, res) => {
 
 app.get(apiPath + version + '/events/:eventId/bookings/:bookingId', (req, res) => {
     if (!utility.isValidObjectID(req.params.eventId)) {
-        return res.status(404).json({"message": "Event not found!"});
+        return res.status(404).json({ "message": "Event not found!" });
     }
 
     if (!utility.isValidObjectID(req.params.bookingId)) {
-        return res.status(404).json({"message": "Booking not found!"});
+        return res.status(404).json({ "message": "Booking not found!" });
     }
 
-    Booking.findOne({eventId: req.params.eventId, _id: req.params.bookingId}, '-__v -eventId', function(err, booking) {
+    Booking.findOne({ eventId: req.params.eventId, _id: req.params.bookingId }, '-__v -eventId', function (err, booking) {
         if (err) { return res.status(500).json({ "message": "Internal server error on getting a booking." }); }
 
         if (booking === null) {
-            return res.status(404).json({"message":"Booking not found."});
+            return res.status(404).json({ "message": "Booking not found." });
         }
         res.status(200).json(booking);
     });
@@ -134,10 +134,10 @@ app.get(apiPath + version + '/events/:eventId/bookings/:bookingId', (req, res) =
 
 app.post(apiPath + version + '/events/:eventId/bookings', (req, res) => {
     if (!utility.isValidObjectID(req.params.eventId)) {
-        return res.status(404).json({"message": "Event not found!"});
+        return res.status(404).json({ "message": "Event not found!" });
     }
 
-    Event.findOne({_id: req.params.eventId}, '-__v', function (err, event) {
+    Event.findOne({ _id: req.params.eventId }, '-__v', function (err, event) {
         if (err) { return next(err); }
         if (event == null) {
             return res.status(404).json({ "error": "Event not found" });
@@ -151,48 +151,48 @@ app.post(apiPath + version + '/events/:eventId/bookings', (req, res) => {
             return res.status(400).json({ "error": "Spots is required for a booking." });
         }
 
-        Booking.aggregate([ { $match: { "eventId": new mongoose.Types.ObjectId(req.params.eventId) } },
-                            { $group : { _id : "$eventId", total : { $sum : "$spots" } } }])
-                            .exec((err, sum) => {
-                                if (err) { return next(err); }
-                                
-                                let remainingCap = event.capacity;
+        Booking.aggregate([{ $match: { "eventId": new mongoose.Types.ObjectId(req.params.eventId) } },
+        { $group: { _id: "$eventId", total: { $sum: "$spots" } } }])
+            .exec((err, sum) => {
+                if (err) { return next(err); }
 
-                                if (sum.length !== 0) {
-                                    remainingCap -= sum[0].total;
-                                }
+                let remainingCap = event.capacity;
 
-                                if (req.body.spots > remainingCap) {
-                                    return res.status(400).json({ "error": "Not enough spots available for this event." });
-                                }
+                if (sum.length !== 0) {
+                    remainingCap -= sum[0].total;
+                }
 
-                                let myBookingObj = req.body;
-                                myBookingObj.eventId = req.params.eventId;
-                                let booking = new Booking(myBookingObj);
-            
-                                booking.save(function(err) {
-                                    if (err) { 
-                                        return res.status(500).json({ "message": "Internal server error while storing booking." }); 
-                                    }
-                                    res.status(201).json(booking.getPublic());
-                                });
-                            });
+                if (req.body.spots > remainingCap) {
+                    return res.status(400).json({ "error": "Not enough spots available for this event." });
+                }
+
+                let myBookingObj = req.body;
+                myBookingObj.eventId = req.params.eventId;
+                let booking = new Booking(myBookingObj);
+
+                booking.save(function (err) {
+                    if (err) {
+                        return res.status(500).json({ "message": "Internal server error while storing booking." });
+                    }
+                    res.status(201).json(booking.getPublic());
+                });
+            });
     });
 });
 
 app.delete(apiPath + version + '/events/:eventId/bookings/:bookingId', (req, res) => {
     if (!utility.isValidObjectID(req.params.eventId)) {
-        return res.status(404).json({"message": "Event not found!"});
+        return res.status(404).json({ "message": "Event not found!" });
     }
 
     if (!utility.isValidObjectID(req.params.bookingId)) {
-        return res.status(404).json({"message": "Booking not found!"});
+        return res.status(404).json({ "message": "Booking not found!" });
     }
 
-    Booking.findOneAndDelete({eventId: req.params.eventId, _id: req.params.bookingId}, function(err, booking) {
+    Booking.findOneAndDelete({ eventId: req.params.eventId, _id: req.params.bookingId }, function (err, booking) {
         if (err) { return res.status(500).json({ "message": "Internal server error on getting a booking." }); }
         if (booking === null) {
-            return res.status(404).json({"message":"Booking not found."});
+            return res.status(404).json({ "message": "Booking not found." });
         }
 
         res.status(200).json(booking.getPublic());

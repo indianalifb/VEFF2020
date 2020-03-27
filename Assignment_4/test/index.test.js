@@ -24,7 +24,7 @@ describe('Endpoint tests', () => {
     //The ids of both are stored in eventId and bookingId
     //###########################
     beforeEach((done) => {
-        let event = new Event({ name: "Test Event", capacity: 10, startDate: 1590840000000, endDate: 1590854400000});
+        let event = new Event({ name: "Test Event", capacity: 10, startDate: 1590840000000, endDate: 1590854400000 });
 
         Event.deleteMany({}, (err) => {
             Booking.deleteMany({}, (err) => {
@@ -44,7 +44,7 @@ describe('Endpoint tests', () => {
     //Write your tests below here
     //###########################
 
-    it("should always pass", function() {
+    it("should always pass", function () {
         console.log("Our event has id " + eventId);
         console.log("Our booking has id " + bookingId);
         chai.expect(1).to.equal(1);
