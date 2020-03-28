@@ -51,6 +51,8 @@ describe('Endpoint tests', () => {
     });
 });
 
+//1. Get /events
+//Get all events
 it('Get /api/v1/events', function (done) {
     chai.request('http://localhost:3000/api/v1').get('/events').end((err, res) => {
         chai.expect(res).to.have.status(200);
@@ -60,3 +62,39 @@ it('Get /api/v1/events', function (done) {
         done();
     });
 });
+
+//2. Get /events/:eventId
+//Get event by id
+// it('GET /events/:eventId', function (done) {
+//     chai.request('http://localhost:3000/api/v1').get('/events/'+ eventId).end( (err, res) => {
+//         chai.expect(res).to.have.status(200);
+//         chai.expect(res).to.be.json;
+//         chai.expect(res.body).to.be.a('object');
+//     });
+// });
+
+//3. POST /events
+//  make a new event
+// it('POST /events', function (done) {
+//     chai.request('http://localhost:3000/api/v1').post('/events')...
+//     chai.expect(res).to.have.status(201);
+// });
+
+//4. GET /events/:eventid/bookings
+//Get all bookings
+// it("GET /events/:eventid/bookings", function (done) {
+
+// });
+
+
+//5. POST /events/:eventid/bookings
+//Make a new booking
+// it("POST /events/:eventid/bookings", function (done) {
+
+// });
+
+//6. GET/events/:eventId/bookings/:bookingId
+//Get booking by eventId & bookingId
+// it("GET /events/:eventId/bookings/:bookingId", function (done) {
+
+// });
