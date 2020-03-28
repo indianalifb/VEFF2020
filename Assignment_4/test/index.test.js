@@ -50,3 +50,13 @@ describe('Endpoint tests', () => {
         chai.expect(1).to.equal(1);
     });
 });
+
+it('Get /api/v1/events', function (done) {
+    chai.request('http://localhost:3000/api/v1').get('/events').end((err, res) => {
+        chai.expect(res).to.have.status(200);
+        chai.expect(res).to.be.json;
+        chai.expect(res.body).to.be.an('array');
+        chai.expect(Object.keys(res.body).length).to.be.eql(1);
+        done();
+    });
+});
