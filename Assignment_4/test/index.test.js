@@ -124,4 +124,6 @@ it("GET /events/:eventId/bookings/:bookingId", function (done) {
         chai.expect(res.body).to.have.property('tel').to.be.an('string');
         done();
     });
- });
+});
+
+
