@@ -99,8 +99,12 @@ it("GET /events/:eventid/bookings", function (done) {
 
 // });
 
-//6. GET/events/:eventId/bookings/:bookingId
-//Get booking by eventId & bookingId
-// it("GET /events/:eventId/bookings/:bookingId", function (done) {
+// 6. GET/events/:eventId/bookings/:bookingId
+// Get booking by eventId & bookingId
+it("GET /events/:eventId/bookings/:bookingId", function (done) {
+    chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
+    
+    });
 
-// });
+
+});
