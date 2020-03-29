@@ -103,7 +103,11 @@ it("GET /events/:eventid/bookings", function (done) {
 // Get booking by eventId & bookingId
 it("GET /events/:eventId/bookings/:bookingId", function (done) {
     chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
-    
+        chai.expect(res).to.have.status(200);
+        chai.expect(res).to.be.json;
+        chai.expect(res.body).to.be.a('object');
+        chai.expect(res.body).to.have.property('')
+
     });
 
 
