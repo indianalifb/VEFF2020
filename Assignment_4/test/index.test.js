@@ -82,9 +82,15 @@ it('Get /api/v1/events', function (done) {
 
 //4. GET /events/:eventid/bookings
 //Get all bookings
-// it("GET /events/:eventid/bookings", function (done) {
-
-// });
+//fæ failed- veit ekki afh ./
+it("GET /events/:eventid/bookings", function (done) {
+    chai.request('http://localhost:3000/api/v1').get('/events:eventid/bookings').end((err, res) => {
+        chai.expect(res).to.have.status(200);
+        chai.expect(res).to.be.json;
+        chai.expect(res.body).to.be.an('array');
+        done();
+    });
+});
 
 
 //5. POST /events/:eventid/bookings
