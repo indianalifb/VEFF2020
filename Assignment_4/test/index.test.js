@@ -53,7 +53,7 @@ describe('Endpoint tests', () => {
 
     //1. Get /events
     //Get all events
-    it('Get /api/v1/events', function (done) {
+    it('GET /api/v1/events', function (done) {
         chai.request('http://localhost:3000/api/v1').get('/events').end((err, res) => {
             chai.expect(res).to.have.status(200);
             chai.expect(res).to.be.json;
@@ -80,7 +80,7 @@ describe('Endpoint tests', () => {
             chai.expect(res.body).to.have.property('startDate');
             chai.expect(res.body).to.have.property('endDate');
             chai.expect(res.body).to.have.property('bookings').to.be.an('array');
-            done()
+            done();
         });
     });
 
@@ -106,7 +106,24 @@ describe('Endpoint tests', () => {
 
     //5. POST /events/:eventid/bookings
     //Make a new booking
-    // it("POST /events/:eventid/bookings", function (done) {
+    it("POST /events/:eventid/bookings", function (done) {
+        chai.request('http://localhost:3000/api/v1').post('/events/' + eventId + '/bookings')
+            .set('Content-type', 'application/json')
+            .send({ 'firstName': 'Jon', 'lastName': 'Jonsson', 'tel': '1234567', 'email': 'jon@ru.is', 'spots': 5 })
+            .end((err, res) => {
+                chai.expect(res).to.have.status(201);
+                chai.expect(res).to.be.json;
+                chai.expect(res.body).to.be.a('object');
+                chai.expect(res.body).to.have.property('firstName').eql('Jon');
+                chai.expect(res.body).to.have.property('lastName').eql('Jonsson');
+                chai.expect(res.body).to.have.property('tel').eql('1234567');
+                chai.expect(res.body).to.have.property('email').eql('jon@ru.is');
+                chai.expect(res.body).to.have.property('spots').eql(5);
+                chai.expect(res.body).to.have.property('_id');
+                chai.expect(Object.keys(res.body).length).to.be.eql(6);
+                done();
+            })
+    });
 
     // 6. GET/events/:eventId/bookings/:bookingId
     // Get booking by eventId & bookingId
