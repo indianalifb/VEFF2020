@@ -118,8 +118,6 @@ describe('Endpoint tests', () => {
             chai.expect(res).to.be.json;
             chai.expect(res.body).to.be.a('object');
             chai.expect(res.body).to.have.property('')
-
         });
-
-
     });
+});
