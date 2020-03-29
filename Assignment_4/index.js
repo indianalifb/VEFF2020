@@ -4,6 +4,8 @@ var Event = require('./models/event');
 var Booking = require('./models/booking');
 var mongoose = require('mongoose');
 var utility = require('./utility/objectIdChecker');
+const basicAuthentication = require('express-basic-auth');
+var sha256 = require('js-sha256');
 
 //Import a body parser module to be able to access the request body as json
 const bodyParser = require('body-parser');
@@ -33,6 +35,7 @@ app.use(bodyParser.json());
 
 //Tell express to use cors -- enables CORS for this backend
 app.use(cors());
+
 
 //Event endpoints
 app.get(apiPath + version + '/events', (req, res) => {
@@ -78,28 +81,6 @@ app.post(apiPath + version + '/events', (req, res) => {
     });
 });
 
-app.delete(apiPath + version + '/events/:eventId', (req, res) => {
-    if (!utility.isValidObjectID(req.params.eventId)) {
-        return res.status(404).json({ "error": "Event not found!" });
-    }
-
-    Booking.find({ eventId: req.params.eventId }, (err, bookings) => {
-        if (err) { return res.status(500).json({ "message": "Internal server error." }); }
-
-        if (bookings.length > 0) {
-            return res.status(400).json({ "message": "Cannot delete events with existing bookings." });
-        } else {
-            Event.findOneAndDelete({ _id: req.params.eventId }, function (err, event) {
-                if (err || event == null) { return res.status(404).json({ "error": "Event not found!" }); }
-
-                let eventObj = event.getPublic();
-                eventObj.bookings = [];
-
-                return res.status(200).json(eventObj);
-            });
-        }
-    });
-});
 
 //Bookings endpoints
 app.get(apiPath + version + '/events/:eventId/bookings', (req, res) => {
@@ -180,7 +161,52 @@ app.post(apiPath + version + '/events/:eventId/bookings', (req, res) => {
     });
 });
 
-app.delete(apiPath + version + '/events/:eventId/bookings/:bookingId', (req, res) => {
+// all following endpoints need authentication
+var users = { username: 'admin', password: '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b' };
+
+var auth = basicAuthentication({
+    authorizer: myAsyncAuthorizer,
+    authorizeAsync: true,
+});
+
+function myAsyncAuthorizer(username, password, cb) {
+    if (username == users.username && sha256(password) == users.password) {
+        return cb(null, true);
+    } else {
+        return cb(null, false);
+    };
+}
+
+app.delete(apiPath + version + '/events/:eventId', auth, (req, res) => {
+    var base64String = Buffer.from(req.auth.user + ":" + req.auth.password, "binary").toString("base64");
+    res.setHeader('Authorization', 'Basic ' + base64String);
+    res.status(200).send("You are authenticated");
+    if (!utility.isValidObjectID(req.params.eventId)) {
+        return res.status(404).json({ "error": "Event not found!" });
+    }
+
+    Booking.find({ eventId: req.params.eventId }, (err, bookings) => {
+        if (err) { return res.status(500).json({ "message": "Internal server error." }); }
+
+        if (bookings.length > 0) {
+            return res.status(400).json({ "message": "Cannot delete events with existing bookings." });
+        } else {
+            Event.findOneAndDelete({ _id: req.params.eventId }, function (err, event) {
+                if (err || event == null) { return res.status(404).json({ "error": "Event not found!" }); }
+
+                let eventObj = event.getPublic();
+                eventObj.bookings = [];
+
+                return res.status(200).json(eventObj);
+            });
+        }
+    });
+});
+
+app.delete(apiPath + version + '/events/:eventId/bookings/:bookingId', auth, (req, res) => {
+    var base64String = Buffer.from(req.auth.user + ":" + req.auth.password, "binary").toString("base64");
+    res.setHeader('Authorization', 'Basic ' + base64String);
+    res.status(200).send("You are authenticated");
     if (!utility.isValidObjectID(req.params.eventId)) {
         return res.status(404).json({ "message": "Event not found!" });
     }
@@ -224,3 +250,4 @@ app.listen(port, () => {
 });
 
 module.exports = app;
+
