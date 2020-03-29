@@ -108,20 +108,21 @@ describe('Endpoint tests', () => {
     //Make a new booking
     // it("POST /events/:eventid/bookings", function (done) {
 
-// 6. GET/events/:eventId/bookings/:bookingId
-// Get booking by eventId & bookingId
-it("GET /events/:eventId/bookings/:bookingId", function (done) {
-    chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
-        chai.expect(res).to.have.status(200);
-        chai.expect(res).to.be.json;
-        chai.expect(Object.keys(res.body).length).to.be.eql(6);
-        chai.expect(res.body).to.be.a('object');
-        chai.expect(res.body).to.have.property('_id').to.be.eql(bookingId.toString);
-        chai.expect(res.body).to.have.property('firstName').to.be.eql('Jane');
-        chai.expect(res.body).to.have.property('lastName').to.be.eql('Doe');
-        chai.expect(res.body).to.have.property('spots').to.be.eql(2);
-        chai.expect(res.body).to.have.property('email').to.be.eql('jane@doe.com');
-        chai.expect(res.body).to.have.property('tel').to.be.an('string');
-        done();
+    // 6. GET/events/:eventId/bookings/:bookingId
+    // Get booking by eventId & bookingId
+    it("GET /events/:eventId/bookings/:bookingId", function (done) {
+        chai.request('http://localhost:3000/api/v1').get('/events/' + eventId + '/bookings/' + bookingId).end((err, res) => {
+            chai.expect(res).to.have.status(200);
+            chai.expect(res).to.be.json;
+            chai.expect(Object.keys(res.body).length).to.be.eql(6);
+            chai.expect(res.body).to.be.a('object');
+            chai.expect(res.body).to.have.property('_id').to.be.eql(bookingId.toString());
+            chai.expect(res.body).to.have.property('firstName').to.be.eql('Jane');
+            chai.expect(res.body).to.have.property('lastName').to.be.eql('Doe');
+            chai.expect(res.body).to.have.property('spots').to.be.eql(2);
+            chai.expect(res.body).to.have.property('email').to.be.eql('jane@doe.com');
+            chai.expect(res.body).to.have.property('tel').to.be.an('string');
+            done();
+        });
     });
- });
+});
