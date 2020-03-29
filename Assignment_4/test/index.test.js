@@ -83,7 +83,6 @@ describe('Endpoint tests', () => {
             done()
         });
     });
-<<<<<<< HEAD
 
     //3. POST /events
     //  make a new event
@@ -102,48 +101,6 @@ describe('Endpoint tests', () => {
             chai.expect(Object.keys(res.body).length).to.be.eql(1);
             done();
         });
-=======
-});
-
-//2. Get /events/:eventId
-//Get event by id
-it('GET /events/:eventId', function (done) {
-    chai.request('http://localhost:3000/api/v1').get('/events' + eventId).end( (err, res) => {
-        chai.expect(res).to.have.status(200);
-        chai.expect(res).to.be.json;
-        chai.expect(res.body).to.be.a('object');
-        chai.expect(Object.keys(res.body).length).to.be.eql(8);
-        //chai.expect(res.body).to.have.property('_id').to.be.eql(String(eventId)); 
-        chai.expect(res.body).to.have.property('_id').to.be.eql(eventId.toString());
-        chai.expect(res.body).to.have.property('name').eql('Test Event'); //veit ekki alveg hvað á að koma hér???
-        chai.expect(res.body).to.have.property('description').to.be.a('string');
-        chai.expect(res.body).to.have.property('location').to.be.a('string');
-        chai.expect(res.body).to.have.property('capacity').eql(10);
-        chai.expect(res.body).to.have.property('startDate');
-        chai.expect(res.body).to.have.property('endDate');
-        chai.expect(res.body).to.have.property('bookings').to.be.an('array');
-        done()
-    });
-});
-
-//3. POST /events
-//  make a new event
-// it('POST /events', function (done) {
-//     chai.request('http://localhost:3000/api/v1').post('/events')...
-//     chai.expect(res).to.have.status(201);
-// });
-
-//4. GET /events/:eventid/bookings
-//Get all bookings
-//fæ failed- veit ekki afh ./
-it("GET /events/:eventid/bookings", function (done) {
-    chai.request('http://localhost:3000/api/v1').get('/events:eventid/bookings').end((err, res) => {
-        chai.expect(res).to.have.status(200);
-        chai.expect(res).to.be.json;
-        chai.expect(res.body).to.be.an('array');
-        //chai.expect(Object.keys(res.body).length).to.be.eql(1);
-        done();
->>>>>>> 18e3525b75763b48506845e14641a1cb5a96af08
     });
 
 
@@ -153,29 +110,16 @@ it("GET /events/:eventid/bookings", function (done) {
 
     // });
 
-<<<<<<< HEAD
     // 6. GET/events/:eventId/bookings/:bookingId
     // Get booking by eventId & bookingId
-    // it("GET /events/:eventId/bookings/:bookingId", function (done) {
-    //     chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
+    it("GET /events/:eventId/bookings/:bookingId", function (done) {
+        chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
+            chai.expect(res).to.have.status(200);
+            chai.expect(res).to.be.json;
+            chai.expect(res.body).to.be.a('object');
+            chai.expect(res.body).to.have.property('')
 
-    //     });
+        });
 
-
-    // });
-});
-=======
-// 6. GET/events/:eventId/bookings/:bookingId
-// Get booking by eventId & bookingId
-it("GET /events/:eventId/bookings/:bookingId", function (done) {
-    chai.request('http://localhost:3000/api/v1').get('/events:eventId/bookings/:bookingId').end((err, res) => {
-        chai.expect(res).to.have.status(200);
-        chai.expect(res).to.be.json;
-        chai.expect(res.body).to.be.a('object');
-        chai.expect(res.body).to.have.property('')
 
     });
-
-
- });
->>>>>>> 18e3525b75763b48506845e14641a1cb5a96af08
