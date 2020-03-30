@@ -180,14 +180,12 @@ function myAsyncAuthorizer(username, password, cb) {
 app.delete(apiPath + version + '/events/:eventId', auth, (req, res) => {
     var base64String = Buffer.from(req.auth.user + ":" + req.auth.password, "binary").toString("base64");
     res.setHeader('Authorization', 'Basic ' + base64String);
-    res.status(200).send("You are authenticated");
     if (!utility.isValidObjectID(req.params.eventId)) {
         return res.status(404).json({ "error": "Event not found!" });
     }
 
     Booking.find({ eventId: req.params.eventId }, (err, bookings) => {
         if (err) { return res.status(500).json({ "message": "Internal server error." }); }
-
         if (bookings.length > 0) {
             return res.status(400).json({ "message": "Cannot delete events with existing bookings." });
         } else {
@@ -206,7 +204,6 @@ app.delete(apiPath + version + '/events/:eventId', auth, (req, res) => {
 app.delete(apiPath + version + '/events/:eventId/bookings/:bookingId', auth, (req, res) => {
     var base64String = Buffer.from(req.auth.user + ":" + req.auth.password, "binary").toString("base64");
     res.setHeader('Authorization', 'Basic ' + base64String);
-    res.status(200).send("You are authenticated");
     if (!utility.isValidObjectID(req.params.eventId)) {
         return res.status(404).json({ "message": "Event not found!" });
     }
