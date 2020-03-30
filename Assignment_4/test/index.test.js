@@ -72,7 +72,7 @@ describe('Endpoint tests', () => {
             chai.expect(res.body).to.be.a('object');
             chai.expect(Object.keys(res.body).length).to.be.eql(8);
             chai.expect(res.body).to.have.property('_id').to.be.eql(eventId.toString());
-            chai.expect(res.body).to.have.property('name').eql('Test Event'); 
+            chai.expect(res.body).to.have.property('name').eql('Test Event');
             chai.expect(res.body).to.have.property('description').to.be.a('string');
             chai.expect(res.body).to.have.property('location').to.be.a('string');
             chai.expect(res.body).to.have.property('capacity').eql(10);
@@ -86,23 +86,23 @@ describe('Endpoint tests', () => {
     //3. POST /events
     //  make a new event
     it('POST /events', function (done) {
-        chai.request('http://localhost:3000/api/v1').post('/events')                                                                
-        .set('Content-type', 'application/json')
-        .send({'name':'Busaball Verzló', 'description':'framhaldsskólaball', 'location':'Hlíðarendi', 'capacity':70, 'startDate':'1590840000000', 'endDate':'1590854400000'})
-        .end((err, res) => {
-        chai.expect(res).to.have.status(201);
-        chai.expect(res).to.be.json;
-        chai.expect(res.body).to.be.a('object');
-        chai.expect(res.body).to.have.property('_id');
-        chai.expect(res.body).to.have.property('name').eql('Busaball Verzló'); 
-        chai.expect(res.body).to.have.property('description').eql('framhaldsskólaball');
-        chai.expect(res.body).to.have.property('location').eql('Hlíðarendi');
-        chai.expect(res.body).to.have.property('capacity').eql(70);
-        chai.expect(res.body).to.have.property('startDate');
-        chai.expect(res.body).to.have.property('endDate');
-        chai.expect(Object.keys(res.body).length).to.be.eql(7);
-        done();
-        });
+        chai.request('http://localhost:3000/api/v1').post('/events')
+            .set('Content-type', 'application/json')
+            .send({ 'name': 'Busaball Verzló', 'description': 'framhaldsskólaball', 'location': 'Hlíðarendi', 'capacity': 70, 'startDate': '1590840000000', 'endDate': '1590854400000' })
+            .end((err, res) => {
+                chai.expect(res).to.have.status(201);
+                chai.expect(res).to.be.json;
+                chai.expect(res.body).to.be.a('object');
+                chai.expect(res.body).to.have.property('_id');
+                chai.expect(res.body).to.have.property('name').eql('Busaball Verzló');
+                chai.expect(res.body).to.have.property('description').eql('framhaldsskólaball');
+                chai.expect(res.body).to.have.property('location').eql('Hlíðarendi');
+                chai.expect(res.body).to.have.property('capacity').eql(70);
+                chai.expect(res.body).to.have.property('startDate');
+                chai.expect(res.body).to.have.property('endDate');
+                chai.expect(Object.keys(res.body).length).to.be.eql(7);
+                done();
+            });
     });
 
 
