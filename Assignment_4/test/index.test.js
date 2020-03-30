@@ -157,4 +157,24 @@ describe('Endpoint tests', () => {
             done();
         });
     });
+
+    //Write two tests for the 
+    //DELETE /api/v1/events/:eventId/bookings/:bookingId endpoint.
+    it(" Authenticated DELETE /api/v1/events/:eventId/bookings/:bookingId", function (done) {
+        chai.request('http://localhost:3000/api/v1').delete('/events/' + eventId + '/bookings/' + bookingId)
+            .auth('admin', 'secret')
+            .end((err, res) => {
+                chai.expect(res).to.have.status(200);
+                done();
+            });
+    });
+
+    it("Not-Authenticated DELETE /api/v1/events/:eventId/bookings/:bookingId", function (done) {
+        chai.request('http://localhost:3000/api/v1').delete('/events/' + eventId + '/bookings/' + bookingId)
+            .auth('admin', 'notSoSecret')
+            .end((err, res) => {
+                chai.expect(res).not.to.have.status(200);
+                done()
+            });
+    });
 });
